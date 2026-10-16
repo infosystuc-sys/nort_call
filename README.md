@@ -96,7 +96,9 @@ manual, y abre alertas de intervención para las situaciones activas de Configur
   análisis muestra el modelo que lo hizo.
 - Cola (Conversaciones › "Analizar pendientes (N)", admin y supervisor): analiza de a una las conversaciones
   filtradas sin análisis o con mensajes nuevos, con `soloGroq: true`. Si Groq devuelve 429 la cola se pausa y
-  pregunta: seguir con Claude, esperar un minuto o detener. Corre en el navegador (la pestaña debe quedar abierta).
+  pregunta: seguir con Claude, esperar o detener. Si se elige esperar, reintenta sola (el tiempo que pide Groq,
+  `esperarSeg`, o un minuto) cada vez que Groq siga al límite, sin volver a preguntar. Corre en el navegador y se
+  guarda en `localStorage`: si se recarga la página, se retoma al volver a entrar con el mismo usuario.
 
 ### Pendiente
 

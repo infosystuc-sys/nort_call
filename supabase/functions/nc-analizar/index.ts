@@ -116,6 +116,15 @@ function instrucciones(estados: { id: string; nombre: string }[], situaciones: {
   ].join('\n');
 }
 
+// Cuánto pide Groq esperar ante un 429: header retry-after o el "try again in 1m23.5s" del mensaje.
+function segundosDeEspera(retryAfter: string | null, mensaje?: string): number | undefined {
+  const h = Number(retryAfter);
+  if (retryAfter && Number.isFinite(h) && h > 0) return Math.ceil(h);
+  const m = /try again in\s+(?:(\d+)h)?(?:(\d+)m)?(?:([\d.]+)s)?/i.exec(mensaje ?? '');
+  if (!m || !(m[1] || m[2] || m[3])) return undefined;
+  return Math.ceil(Number(m[1] ?? 0) * 3600 + Number(m[2] ?? 0) * 60 + Number(m[3] ?? 0));
+}
+
 async function conGroq(apiKey: string, sistema: string, conversacion: string, schema: unknown): Promise<Resultado> {
   const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
@@ -132,7 +141,11 @@ async function conGroq(apiKey: string, sistema: string, conversacion: string, sc
     signal: AbortSignal.timeout(90000),
   });
   const cuerpo = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(`Groq HTTP ${r.status}: ${JSON.stringify(cuerpo?.error ?? cuerpo).slice(0, 300)}`);
+  if (!r.ok) {
+    const err = new Error(`Groq HTTP ${r.status}: ${JSON.stringify(cuerpo?.error ?? cuerpo).slice(0, 300)}`) as Error & { esperarSeg?: number };
+    if (r.status === 429) err.esperarSeg = segundosDeEspera(r.headers.get('retry-after'), cuerpo?.error?.message);
+    throw err;
+  }
   const texto = cuerpo?.choices?.[0]?.message?.content;
   if (!texto) throw new Error('Groq no devolvió contenido.');
   return JSON.parse(texto);
@@ -209,12 +222,14 @@ Deno.serve(async req => {
   let resultado: Resultado | null = null;
   let modelo = '';
   const errores: string[] = [];
+  let esperarSeg: number | undefined;
   if (groqKey) {
     try {
       resultado = await conGroq(groqKey, sistema, conversacion, schema);
       modelo = `groq/${MODELO_GROQ}`;
     } catch (e) {
       errores.push(e instanceof Error ? e.message : String(e));
+      esperarSeg = (e as { esperarSeg?: number })?.esperarSeg;
     }
   } else errores.push('No hay API Key de Groq.');
   if (!resultado && soloGroq) {
@@ -223,6 +238,7 @@ Deno.serve(async req => {
     return json({
       ok: false,
       limiteGroq: limite,
+      esperarSeg: limite ? esperarSeg : undefined,
       mensaje: limite ? 'Groq alcanzó su límite de uso.' : `Groq no pudo analizar: ${errores.join(' · ')}`,
     });
   }

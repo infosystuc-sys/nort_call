@@ -76,7 +76,12 @@ export default class App extends Component {
       // el navegador pudo pausar la conexión: al volver se hace una recarga completa por las dudas.
       this._vis = () => {
         if (document.visibilityState === 'hidden') this._ocultaDesde = Date.now();
-        else if (this._ocultaDesde && Date.now() - this._ocultaDesde > 120000) this.refrescar();
+        else {
+          if (this._ocultaDesde && Date.now() - this._ocultaDesde > 120000) this.refrescar();
+          // El navegador puede demorar los temporizadores de una pestaña oculta: si ya era hora, se reintenta.
+          const c = this._cola;
+          if (c && c.fase === 'esperando' && !c.corriendo && Date.now() >= c.reintentoEn) this.procesarCola();
+        }
       };
       document.addEventListener('visibilitychange', this._vis);
       api
@@ -131,6 +136,7 @@ export default class App extends Component {
         loginPass: '',
       });
       this.suscribir();
+      this.retomarCola(u);
     } catch (e) {
       this.setState({ loggingIn: false, loadError: true });
     }
@@ -554,54 +560,120 @@ export default class App extends Component {
     }, 1600);
   }
   // Cola de análisis: analiza de a una las conversaciones pedidas, solo con Groq. Si Groq llega a su límite,
-  // se pausa y pregunta si seguir con Claude (que tiene costo) o esperar. Corre mientras la pestaña esté abierta.
+  // se pausa y pregunta si seguir con Claude (que tiene costo) o esperar. Si se elige esperar, sigue esperando
+  // sola cada vez que Groq vuelva a estar al límite. Corre en el navegador y se guarda en localStorage,
+  // así que sobrevive a una recarga de la página (se retoma al volver a entrar con el mismo usuario).
   iniciarCola(ids) {
     if (this.state.cola?.activa || !ids.length) return;
-    this._cola = { ids: [...ids], i: 0, hechos: 0, conClaude: 0, errores: 0, usarClaude: false, detener: false };
+    this._cola = {
+      ids: [...ids],
+      i: 0,
+      hechos: 0,
+      conClaude: 0,
+      errores: 0,
+      usarClaude: false,
+      esperarGroq: false,
+      reintentoEn: 0,
+      fase: 'analizando',
+      userId: this.state.user?.id,
+      detener: false,
+    };
     this.procesarCola();
   }
   publicarCola(fase, activa = true) {
     const c = this._cola;
+    c.fase = fase;
+    this.guardarCola(activa ? c : null);
     this.setState({
-      cola: { activa, fase, total: c.ids.length, hechos: c.hechos, conClaude: c.conClaude, errores: c.errores, usarClaude: c.usarClaude },
+      cola: {
+        activa,
+        fase,
+        total: c.ids.length,
+        hechos: c.hechos,
+        conClaude: c.conClaude,
+        errores: c.errores,
+        usarClaude: c.usarClaude,
+        reintentoEn: c.reintentoEn,
+      },
     });
+  }
+  guardarCola(c) {
+    try {
+      if (!c) return localStorage.removeItem('nc_cola');
+      const { detener, corriendo, ...datos } = c;
+      localStorage.setItem('nc_cola', JSON.stringify(datos));
+    } catch (e) {}
+  }
+  // Retoma una cola guardada (después de recargar la página), si es del mismo usuario.
+  retomarCola(user) {
+    if (this._cola || !api.usaSupabase) return;
+    let c = null;
+    try {
+      c = JSON.parse(localStorage.getItem('nc_cola') || 'null');
+    } catch (e) {}
+    if (!c || !Array.isArray(c.ids) || c.i >= c.ids.length || c.userId !== user.id) return this.guardarCola(null);
+    this._cola = { ...c, detener: false };
+    if (c.fase === 'limite') return this.publicarCola('limite');
+    if (c.fase === 'esperando') return this.programarReintento();
+    this.procesarCola();
+  }
+  programarReintento(segundos) {
+    const c = this._cola;
+    if (segundos != null) c.reintentoEn = Date.now() + Math.min(Math.max(segundos, 30), 3600) * 1000 + 2000;
+    clearTimeout(this._colaEspera);
+    this.publicarCola('esperando');
+    this._colaEspera = setTimeout(() => this.procesarCola(), Math.max(0, c.reintentoEn - Date.now()));
   }
   async procesarCola() {
     const c = this._cola;
-    while (c.i < c.ids.length && !c.detener) {
-      this.publicarCola('analizando');
-      try {
-        const r = await api.analizarConversacion(c.ids[c.i], { soloGroq: !c.usarClaude });
-        if (!r.ok && r.limiteGroq) return this.publicarCola('limite'); // espera la decisión del usuario
-        if (r.ok) {
-          c.hechos++;
-          if (r.respaldo) c.conClaude++;
-        } else c.errores++;
-      } catch (e) {
-        c.errores++;
+    if (!c || c.corriendo) return;
+    clearTimeout(this._colaEspera);
+    c.corriendo = true;
+    try {
+      while (c.i < c.ids.length && !c.detener) {
+        this.publicarCola('analizando');
+        try {
+          const r = await api.analizarConversacion(c.ids[c.i], { soloGroq: !c.usarClaude });
+          if (c.detener) break;
+          if (!r.ok && r.limiteGroq) {
+            // Si ya se eligió esperar, se vuelve a esperar sin preguntar; si no, se pide la decisión.
+            if (c.esperarGroq) return this.programarReintento(r.esperarSeg || 60);
+            return this.publicarCola('limite');
+          }
+          if (r.ok) {
+            c.hechos++;
+            if (r.respaldo) c.conClaude++;
+          } else c.errores++;
+        } catch (e) {
+          c.errores++;
+        }
+        c.i++;
+        // Pausa corta entre análisis para no saturar el límite por minuto de Groq.
+        if (c.i < c.ids.length && !c.detener) await new Promise(res => setTimeout(res, 1500));
       }
-      c.i++;
-      // Pausa corta entre análisis para no saturar el límite por minuto de Groq.
-      if (c.i < c.ids.length && !c.detener) await new Promise(res => setTimeout(res, 1500));
+      if (c.salir) return;
+      this.publicarCola(c.detener ? 'detenida' : 'lista', false);
+    } finally {
+      c.corriendo = false;
     }
-    this.publicarCola(c.detener ? 'detenida' : 'lista', false);
   }
   colaSeguirConClaude() {
     if (!this._cola) return;
     this._cola.usarClaude = true;
+    this._cola.esperarGroq = false;
     this.toastMsg('La cola sigue con Claude: cada análisis tiene costo.', 'aviso');
     this.procesarCola();
   }
   colaEsperarGroq() {
     if (!this._cola) return;
-    this.publicarCola('esperando');
-    this._colaEspera = setTimeout(() => this.procesarCola(), 60000);
+    this._cola.esperarGroq = true;
+    this.programarReintento(60);
   }
   colaDetener() {
     if (!this._cola) return;
     this._cola.detener = true;
     // Si estaba pausada (límite o esperando) el bucle no corre: se cierra acá.
-    if (['limite', 'esperando'].includes(this.state.cola?.fase)) {
+    if (!this._cola.corriendo) {
       clearTimeout(this._colaEspera);
       this.publicarCola('detenida', false);
     }
@@ -628,9 +700,12 @@ export default class App extends Component {
       ],
       limite: [
         'Groq alcanzó su límite de uso.',
-        `Van ${n} de ${cola.total}. ¿Seguís con Claude (tiene costo) o esperás a que Groq se libere? Se reintenta al minuto.`,
+        `Van ${n} de ${cola.total}. ¿Seguís con Claude (tiene costo) o esperás a que Groq se libere? Si esperás, la cola reintenta sola hasta que Groq responda.`,
       ],
-      esperando: ['Esperando a Groq…', `Se reintenta en un minuto. Van ${n} de ${cola.total}.`],
+      esperando: [
+        'Esperando a Groq…',
+        `Se reintenta a las ${this.hora(new Date(cola.reintentoEn || Date.now()).toISOString())} y sigue esperando sola si Groq continúa al límite. Van ${n} de ${cola.total}. Podés recargar la página: la cola se retoma.`,
+      ],
       lista: ['Cola terminada.', `${cola.hechos} analizadas de ${cola.total}${extras ? ' · ' + extras : ''}.`],
       detenida: ['Cola detenida.', `${cola.hechos} analizadas de ${cola.total}${extras ? ' · ' + extras : ''}.`],
     };
@@ -1967,6 +2042,13 @@ export default class App extends Component {
       userIni: this.initials(u.nombre),
       onLogout: () => {
         this.desuscribir();
+        // La cola queda guardada y se retoma cuando vuelva a entrar el mismo usuario.
+        if (this._cola) {
+          this._cola.detener = this._cola.salir = true;
+          clearTimeout(this._colaEspera);
+          this._cola = null;
+          this.setState({ cola: null });
+        }
         api.cerrarSesion();
         this.setState({ user: null, selConv: null, loginError: '', userModal: null, ...(api.usaSupabase ? { db: null } : {}) });
       },
