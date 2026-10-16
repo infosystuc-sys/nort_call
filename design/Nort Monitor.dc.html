@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block">
+<style>
+html,body{margin:0;padding:0;background:#F4F3EF;color:#17160F;font-family:'Archivo',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#17160F;text-decoration:underline;text-decoration-color:#F2C200;text-underline-offset:3px}
+a:hover{color:#D42A2A}
+input,select,textarea,button{font-family:inherit}
+@keyframes nortPulse{0%,100%{opacity:.55}50%{opacity:1}}
+@keyframes nortSpin{to{transform:rotate(360deg)}}
+</style>
+<script src="mock-data.js"></script>
+</helmet>
+<div style="min-height:100dvh;background:#F4F3EF;color:#17160F;font-family:'Archivo',system-ui,sans-serif">
+<sc-if value="{{ showLogin }}" hint-placeholder-val="{{ true }}">
+<div style="min-height:100dvh;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))">
+  <div style="background:#17160F;color:#F4F3EF;padding:clamp(28px,5vw,56px);display:flex;flex-direction:column;justify-content:space-between;gap:32px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="width:40px;height:40px;border-radius:9px;background:#F2C200;color:#17160F;display:grid;place-items:center;font-weight:800;font-size:19px">N</div>
+      <div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:800;letter-spacing:.08em;font-size:17px">NORT</span><span style="font-size:12px;color:#A8A598">Monitor de ventas</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;max-width:460px">
+      <h1 style="margin:0;font-size:clamp(28px,4vw,42px);line-height:1.08;font-weight:700;letter-spacing:-.02em;text-wrap:balance">Cada conversación de venta, bajo control.</h1>
+      <p style="margin:0;font-size:15px;line-height:1.5;color:#C9C6BA;text-wrap:pretty">Monitoreo de WhatsApp e Instagram de Suplementos Nort, con análisis de IA y alertas para la supervisión.</p>
+    </div>
+    <div style="display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:#A8A598">
+      <span style="display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:50%;background:#128C7E"></span>WhatsApp · Evolution API</span>
+      <span style="display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:50%;background:#C13584"></span>Instagram · Meta API</span>
+    </div>
+  </div>
+  <div style="display:grid;place-items:center;padding:36px 20px">
+    <form onSubmit="{{ onLogin }}" style="width:100%;max-width:380px;display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <h2 style="margin:0;font-size:24px;font-weight:700">Iniciar sesión</h2>
+        <p style="margin:0;font-size:14px;color:#6B6960">Ingresá con tu cuenta de Nort Monitor.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:13px;font-weight:600">Email</span>
+        <input type="email" value="{{ loginEmail }}" onChange="{{ onLoginEmail }}" placeholder="nombre@suplenort.com" style="height:44px;padding:0 13px;border:1px solid #DEDBD1;border-radius:9px;background:#fff;font-size:15px;color:#17160F;outline:none">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:13px;font-weight:600">Contraseña</span>
+        <input type="password" value="{{ loginPass }}" onChange="{{ onLoginPass }}" placeholder="••••••••" style="height:44px;padding:0 13px;border:1px solid #DEDBD1;border-radius:9px;background:#fff;font-size:15px;color:#17160F;outline:none">
+      </div>
+      <sc-if value="{{ hasLoginError }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:8px;align-items:center;padding:10px 12px;border-radius:9px;background:#FBE4E1;color:#B3261E;font-size:13.5px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1">error</span>{{ loginError }}</div>
+      </sc-if>
+      <button type="submit" style="height:46px;border:none;border-radius:9px;background:#17160F;color:#fff;font-size:15px;font-weight:600;cursor:pointer">{{ loginBtn }}</button>
+      <div style="display:flex;align-items:center;gap:10px;color:#8A877D;font-size:12px;margin-top:6px"><span style="flex:1;height:1px;background:#E4E1D8"></span>Acceso de demostración<span style="flex:1;height:1px;background:#E4E1D8"></span></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ demoUsers }}" as="du" hint-placeholder-count="3">
+          <button type="button" onClick="{{ du.onClick }}" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid #E4E1D8;border-radius:10px;background:#fff;cursor:pointer;text-align:left;color:#17160F;min-height:52px" style-hover="border-color:#17160F">
+            <span style="width:32px;height:32px;border-radius:50%;background:#F2EFE6;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none">{{ du.ini }}</span>
+            <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px"><span style="font-size:14px;font-weight:600">{{ du.rol }}</span><span style="font-size:12px;color:#6B6960;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ du.nombre }} · {{ du.email }}</span></span>
+            <span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#8A877D">arrow_forward</span>
+          </button>
+        </sc-for>
+      </div>
+    </form>
+  </div>
+</div>
+</sc-if>
+<sc-if value="{{ showApp }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;min-height:100dvh">
+  <sc-if value="{{ showSidebar }}" hint-placeholder-val="{{ false }}">
+  <aside style="width:{{ sidebarW }};flex:none;background:#17160F;color:#EDEBE4;position:sticky;top:0;height:100dvh;display:flex;flex-direction:column;gap:4px;padding:18px 12px">
+    <div style="display:flex;align-items:center;gap:10px;padding:4px 8px 22px;justify-content:{{ brandJustify }}">
+      <div style="width:34px;height:34px;border-radius:8px;background:#F2C200;color:#17160F;display:grid;place-items:center;font-weight:800;font-size:16px;flex:none">N</div>
+      <sc-if value="{{ sideLabels }}" hint-placeholder-val="{{ true }}"><div style="display:flex;flex-direction:column;gap:1px"><span style="font-weight:800;letter-spacing:.08em;font-size:15px">NORT</span><span style="font-size:11px;color:#A8A598">Monitor de ventas</span></div></sc-if>
+    </div>
+    <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
+      <button onClick="{{ n.onClick }}" title="{{ n.label }}" style="display:flex;align-items:center;gap:12px;padding:10px;border-radius:8px;border:none;background:{{ n.bg }};color:{{ n.fg }};font-size:14px;font-weight:500;cursor:pointer;text-align:left;position:relative;justify-content:{{ n.justify }};min-height:42px">
+        <span style="font-family:'Material Symbols Rounded';font-size:21px;line-height:1;color:{{ n.ic }}">{{ n.icon }}</span>
+        <sc-if value="{{ n.showLabel }}" hint-placeholder-val="{{ true }}"><span style="flex:1">{{ n.label }}</span></sc-if>
+        <sc-if value="{{ n.hasBadge }}" hint-placeholder-val="{{ false }}"><span style="min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#D42A2A;color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;position:{{ n.badgePos }};top:3px;right:3px;font-family:'IBM Plex Mono',monospace">{{ n.badge }}</span></sc-if>
+      </button>
+    </sc-for>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 8px;border-top:1px solid #2E2C24;justify-content:{{ brandJustify }}">
+      <span style="width:32px;height:32px;border-radius:50%;background:#2E2C24;color:#F2C200;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none">{{ userIni }}</span>
+      <sc-if value="{{ sideLabels }}" hint-placeholder-val="{{ true }}"><div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px"><span style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ userName }}</span><span style="font-size:11.5px;color:#A8A598">{{ userRole }}</span></div></sc-if>
+    </div>
+    <button onClick="{{ onLogout }}" title="Cerrar sesión" style="display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:8px;border:none;background:transparent;color:#B9B6AA;font-size:13px;cursor:pointer;justify-content:{{ brandJustify }}" style-hover="background:#2B2A22">
+      <span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1">logout</span>
+      <sc-if value="{{ sideLabels }}" hint-placeholder-val="{{ true }}"><span>Cerrar sesión</span></sc-if>
+    </button>
+  </aside>
+  </sc-if>
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <sc-if value="{{ showTopbar }}" hint-placeholder-val="{{ false }}">
+    <header style="position:sticky;top:0;z-index:20;height:56px;flex:none;background:#17160F;color:#fff;display:flex;align-items:center;gap:10px;padding:0 10px 0 14px">
+      <div style="width:30px;height:30px;border-radius:7px;background:#F2C200;color:#17160F;display:grid;place-items:center;font-weight:800;font-size:14px;flex:none">N</div>
+      <span style="flex:1;font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ pageTitle }}</span>
+      <sc-if value="{{ hasBell }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ onBell }}" title="Alertas" style="width:44px;height:44px;border:none;background:transparent;color:#fff;position:relative;cursor:pointer;display:grid;place-items:center">
+          <span style="font-family:'Material Symbols Rounded';font-size:23px;line-height:1">notifications</span>
+          <sc-if value="{{ hasBadge }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:6px;right:5px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#D42A2A;color:#fff;font-size:10.5px;font-weight:700;display:grid;place-items:center;font-family:'IBM Plex Mono',monospace">{{ badge }}</span></sc-if>
+        </button>
+      </sc-if>
+      <button onClick="{{ onLogout }}" title="Cerrar sesión" style="height:44px;border:none;background:transparent;color:#fff;cursor:pointer;display:flex;align-items:center;gap:6px;padding:0 6px">
+        <span style="width:30px;height:30px;border-radius:50%;background:#2E2C24;color:#F2C200;display:grid;place-items:center;font-size:11px;font-weight:700">{{ userIni }}</span>
+        <span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#A8A598">logout</span>
+      </button>
+    </header>
+    </sc-if>
+    <sc-if value="{{ appLoading }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:{{ pad }};display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;align-items:center;gap:10px;color:#6B6960;font-size:14px"><span style="width:16px;height:16px;border-radius:50%;border:2px solid #DEDBD1;border-top-color:#17160F;animation:nortSpin .8s linear infinite"></span>Cargando datos…</div>
+        <div style="height:30px;width:220px;border-radius:8px;background:#E6E3DA;animation:nortPulse 1.4s ease-in-out infinite"></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px">
+          <div style="height:112px;border-radius:12px;background:#E9E6DE;animation:nortPulse 1.4s ease-in-out infinite"></div>
+          <div style="height:112px;border-radius:12px;background:#E9E6DE;animation:nortPulse 1.4s ease-in-out infinite"></div>
+          <div style="height:112px;border-radius:12px;background:#E9E6DE;animation:nortPulse 1.4s ease-in-out infinite"></div>
+          <div style="height:112px;border-radius:12px;background:#E9E6DE;animation:nortPulse 1.4s ease-in-out infinite"></div>
+        </div>
+        <div style="height:260px;border-radius:12px;background:#E9E6DE;animation:nortPulse 1.4s ease-in-out infinite"></div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ appError }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:{{ pad }};display:grid;place-items:center;min-height:70vh">
+        <div style="max-width:420px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px">
+          <span style="width:56px;height:56px;border-radius:50%;background:#FBE4E1;color:#B3261E;display:grid;place-items:center;font-family:'Material Symbols Rounded';font-size:28px;line-height:1">cloud_off</span>
+          <h2 style="margin:0;font-size:20px">No pudimos cargar los datos</h2>
+          <p style="margin:0;color:#6B6960;font-size:14px;line-height:1.5">Hubo un problema al conectar con la base de datos. Las conversaciones siguen registrándose; reintentá en unos segundos.</p>
+          <button onClick="{{ onRetry }}" style="margin-top:6px;height:42px;padding:0 18px;border:none;border-radius:9px;background:#17160F;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Reintentar</button>
+        </div>
+      </div>
+    </sc-if>
+<sc-if value="{{ isDash }}" hint-placeholder-val="{{ false }}">
+<div style="padding:{{ pad }};display:flex;flex-direction:column;gap:18px;max-width:1440px;width:100%">
+  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px 20px">
+    <div style="display:flex;flex-direction:column;gap:4px"><h1 style="margin:0;font-size:{{ h1Size }};font-weight:700;letter-spacing:-.01em">Panel principal</h1><span style="color:#6B6960;font-size:14px">{{ rangeLabel }} · {{ canalLabel }}</span></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;gap:2px;padding:3px;background:#E9E6DE;border-radius:9px"><sc-for list="{{ rangeOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.onClick }}" style="padding:6px 11px;border-radius:7px;border:none;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }};font-size:13px;font-weight:{{ o.fw }};cursor:pointer;white-space:nowrap;min-height:32px">{{ o.label }}</button></sc-for></div>
+      <div style="display:flex;gap:2px;padding:3px;background:#E9E6DE;border-radius:9px"><sc-for list="{{ canalOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.onClick }}" style="padding:6px 11px;border-radius:7px;border:none;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }};font-size:13px;font-weight:{{ o.fw }};cursor:pointer;white-space:nowrap;min-height:32px">{{ o.label }}</button></sc-for></div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,190px),1fr));gap:12px">
+    <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
+      <button onClick="{{ k.onClick }}" style="text-align:left;color:#17160F;background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;cursor:{{ k.cursor }};min-width:0">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%"><span style="font-size:12.5px;color:#6B6960;font-weight:500">{{ k.label }}</span><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:#A19E92">{{ k.icon }}</span></div>
+        <div style="display:flex;align-items:baseline;gap:4px"><span style="font-family:'IBM Plex Mono',monospace;font-size:30px;font-weight:600;letter-spacing:-.03em;line-height:1">{{ k.value }}</span><span style="font-size:13px;color:#6B6960">{{ k.unit }}</span></div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6B6960"><sc-if value="{{ k.hasDot }}" hint-placeholder-val="{{ false }}"><span style="width:7px;height:7px;border-radius:50%;background:{{ k.dot }};flex:none"></span></sc-if>{{ k.sub }}</div>
+      </button>
+    </sc-for>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:14px;align-items:start">
+    <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px"><h2 style="margin:0;font-size:15px;font-weight:700">Alertas abiertas</h2><button onClick="{{ onAllAlerts }}" style="border:none;background:none;color:#17160F;font-size:13px;font-weight:600;cursor:pointer;padding:4px 0;text-decoration:underline;text-decoration-color:#F2C200;text-underline-offset:3px">{{ dashAlertsMore }}</button></div>
+      <sc-if value="{{ hasDashAlerts }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column">
+          <sc-for list="{{ dashAlerts }}" as="a" hint-placeholder-count="4">
+            <button onClick="{{ a.onOpen }}" style="display:flex;gap:12px;align-items:center;text-align:left;padding:11px 0;border:none;border-top:1px solid #EEECE5;background:none;color:#17160F;cursor:pointer;width:100%;min-height:52px">
+              <span style="width:92px;flex:none;display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 8px;border-radius:6px;background:{{ a.lvBg }};color:{{ a.lvFg }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ a.lvDot }}"></span>{{ a.nivelLabel }}</span>
+              <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ a.titulo }}</span><span style="font-size:12.5px;color:#6B6960;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ a.cliente }} · {{ a.chLabel }} · {{ a.ago }}</span></span>
+              <span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#A19E92">chevron_right</span>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ noDashAlerts }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:28px 12px;text-align:center;color:#6B6960;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:8px"><span style="font-family:'Material Symbols Rounded';font-size:28px;line-height:1;color:#1E8E4E">task_alt</span>Sin alertas abiertas en este canal.</div>
+      </sc-if>
+    </section>
+    <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px"><h2 style="margin:0;font-size:15px;font-weight:700">Embudo de ventas</h2><span style="font-size:12.5px;color:#6B6960">Conversaciones por estado</span></div>
+      <sc-if value="{{ hasFunnel }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <sc-for list="{{ funnel }}" as="f" hint-placeholder-count="7">
+            <div style="display:grid;grid-template-columns:118px minmax(0,1fr) 30px;align-items:center;gap:10px;font-size:13px">
+              <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ f.nombre }}</span>
+              <div style="height:22px;background:#F2F0EA;border-radius:5px;overflow:hidden"><div style="height:100%;width:{{ f.w }};min-width:3px;background:{{ f.color }};border-radius:5px;transition:width .3s"></div></div>
+              <span style="font-family:'IBM Plex Mono',monospace;text-align:right;font-weight:600">{{ f.count }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ noFunnel }}" hint-placeholder-val="{{ false }}"><div style="padding:28px 12px;text-align:center;color:#6B6960;font-size:14px">Todavía no hay conversaciones para mostrar.</div></sc-if>
+    </section>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:14px">
+    <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px"><h2 style="margin:0;font-size:15px;font-weight:700">Puntaje del vendedor</h2><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#6B6960">último día <b style="color:#17160F">{{ chScore.last }}</b></span></div>
+      <sc-if value="{{ chScore.has }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px">
+          <div style="display:flex;flex-direction:column;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A877D;height:160px;text-align:right"><span>{{ chScore.y0 }}</span><span>{{ chScore.y1 }}</span><span>{{ chScore.y2 }}</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+            <svg viewBox="0 0 600 160" preserveAspectRatio="none" style="width:100%;height:160px;display:block;overflow:visible">
+              <line x1="0" y1="8" x2="600" y2="8" style="stroke:#EEECE5;stroke-width:1;vector-effect:non-scaling-stroke"></line>
+              <line x1="0" y1="80" x2="600" y2="80" style="stroke:#EEECE5;stroke-width:1;vector-effect:non-scaling-stroke"></line>
+              <line x1="0" y1="152" x2="600" y2="152" style="stroke:#E4E1D8;stroke-width:1;vector-effect:non-scaling-stroke"></line>
+              <polygon points="{{ chScore.area }}" style="fill:#F2C200;fill-opacity:.16"></polygon>
+              <polyline points="{{ chScore.pts }}" style="fill:none;stroke:#17160F;stroke-width:2;vector-effect:non-scaling-stroke;stroke-linejoin:round"></polyline>
+            </svg>
+            <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A877D"><span>{{ chScore.x0 }}</span><span>{{ chScore.x1 }}</span><span>{{ chScore.x2 }}</span></div>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ chScore.none }}" hint-placeholder-val="{{ false }}"><div style="height:160px;display:grid;place-items:center;color:#6B6960;font-size:14px;background:#FAF9F6;border-radius:8px">Sin datos para el período.</div></sc-if>
+    </section>
+    <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px"><h2 style="margin:0;font-size:15px;font-weight:700">Tiempo de primera respuesta</h2><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#6B6960">último día <b style="color:#17160F">{{ chTime.last }}</b></span></div>
+      <sc-if value="{{ chTime.has }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px">
+          <div style="display:flex;flex-direction:column;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A877D;height:160px;text-align:right"><span>{{ chTime.y0 }}</span><span>{{ chTime.y1 }}</span><span>{{ chTime.y2 }}</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+            <svg viewBox="0 0 600 160" preserveAspectRatio="none" style="width:100%;height:160px;display:block;overflow:visible">
+              <line x1="0" y1="8" x2="600" y2="8" style="stroke:#EEECE5;stroke-width:1;vector-effect:non-scaling-stroke"></line>
+              <line x1="0" y1="80" x2="600" y2="80" style="stroke:#EEECE5;stroke-width:1;vector-effect:non-scaling-stroke"></line>
+              <line x1="0" y1="152" x2="600" y2="152" style="stroke:#E4E1D8;stroke-width:1;vector-effect:non-scaling-stroke"></line>
+              <polygon points="{{ chTime.area }}" style="fill:#D42A2A;fill-opacity:.08"></polygon>
+              <polyline points="{{ chTime.pts }}" style="fill:none;stroke:#D42A2A;stroke-width:2;vector-effect:non-scaling-stroke;stroke-linejoin:round"></polyline>
+            </svg>
+            <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A877D"><span>{{ chTime.x0 }}</span><span>{{ chTime.x1 }}</span><span>{{ chTime.x2 }}</span></div>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ chTime.none }}" hint-placeholder-val="{{ false }}"><div style="height:160px;display:grid;place-items:center;color:#6B6960;font-size:14px;background:#FAF9F6;border-radius:8px">Sin datos para el período.</div></sc-if>
+    </section>
+  </div>
+</div>
+</sc-if>
+<sc-if value="{{ isConv }}" hint-placeholder-val="{{ false }}">
+<div style="height:{{ convH }};display:flex;flex-direction:column;min-height:0">
+  <sc-if value="{{ showConvHeader }}" hint-placeholder-val="{{ true }}">
+  <div style="flex:none;padding:18px {{ convPadX }} 14px;border-bottom:1px solid #E4E1D8;background:#F4F3EF;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 16px">
+      <div style="display:flex;flex-direction:column;gap:3px"><h1 style="margin:0;font-size:{{ h1Size }};font-weight:700;letter-spacing:-.01em">{{ convTitle }}</h1><span style="color:#6B6960;font-size:13.5px">{{ resultCount }}</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <sc-if value="{{ showViewToggle }}" hint-placeholder-val="{{ true }}"><div style="display:flex;gap:2px;padding:3px;background:#E9E6DE;border-radius:9px"><sc-for list="{{ viewOpts }}" as="o" hint-placeholder-count="2"><button onClick="{{ o.onClick }}" style="padding:6px 11px;border-radius:7px;border:none;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }};font-size:13px;font-weight:{{ o.fw }};cursor:pointer;white-space:nowrap;min-height:32px">{{ o.label }}</button></sc-for></div></sc-if>
+        <div style="display:flex;gap:2px;padding:3px;background:#E9E6DE;border-radius:9px"><sc-for list="{{ canalOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.onClick }}" style="padding:6px 11px;border-radius:7px;border:none;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }};font-size:13px;font-weight:{{ o.fw }};cursor:pointer;white-space:nowrap;min-height:32px">{{ o.label }}</button></sc-for></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+      <div style="flex:1 1 220px;min-width:0;position:relative;display:flex;align-items:center">
+        <span style="position:absolute;left:11px;font-family:'Material Symbols Rounded';font-size:19px;line-height:1;color:#8A877D">search</span>
+        <input type="search" value="{{ q }}" onChange="{{ onQ }}" placeholder="Buscar cliente o texto…" style="width:100%;height:40px;padding:0 12px 0 36px;border:1px solid #DEDBD1;border-radius:9px;background:#fff;font-size:14px;color:#17160F;outline:none">
+      </div>
+      <select data-val="{{ fEstado }}" value="{{ fEstado }}" onChange="{{ onFEstado }}" style="height:40px;padding:0 10px;border:1px solid #DEDBD1;border-radius:9px;background:#fff;font-size:13.5px;color:#17160F;flex:0 1 auto;min-width:0">
+        <sc-for list="{{ estadoOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+      </select>
+      <sc-if value="{{ showAlertaFilter }}" hint-placeholder-val="{{ true }}">
+        <select data-val="{{ fAlerta }}" value="{{ fAlerta }}" onChange="{{ onFAlerta }}" style="height:40px;padding:0 10px;border:1px solid #DEDBD1;border-radius:9px;background:#fff;font-size:13.5px;color:#17160F;flex:0 1 auto;min-width:0">
+          <sc-for list="{{ alertaOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+        </select>
+      </sc-if>
+      <button onClick="{{ espPill.onClick }}" style="height:40px;padding:0 10px 0 12px;border:1px solid {{ espPill.bd }};border-radius:9px;background:{{ espPill.bg }};color:{{ espPill.fg }};font-size:13.5px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px;white-space:nowrap">
+        <span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1">hourglass_top</span>{{ espPill.label }}<span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;padding:1px 7px;border-radius:999px;background:{{ espPill.cbg }};color:#17160F">{{ espPill.count }}</span>
+      </button>
+      <sc-if value="{{ showClear }}" hint-placeholder-val="{{ false }}"><button onClick="{{ onClearFilters }}" style="height:40px;padding:0 10px;border:none;background:none;color:#6B6960;font-size:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px">Limpiar filtros</button></sc-if>
+    </div>
+  </div>
+  </sc-if>
+  <sc-if value="{{ isLista }}" hint-placeholder-val="{{ true }}">
+  <div style="flex:1;min-height:0;display:flex">
+    <sc-if value="{{ showList }}" hint-placeholder-val="{{ true }}">
+    <div style="width:{{ listW }};flex:none;border-right:1px solid #E4E1D8;overflow-y:auto;background:#fff">
+      <sc-if value="{{ hasItems }}" hint-placeholder-val="{{ true }}">
+        <sc-for list="{{ items }}" as="it" hint-placeholder-count="6">
+          <button onClick="{{ it.onClick }}" style="display:flex;gap:12px;padding:14px 16px 14px 14px;border:none;border-bottom:1px solid #EEECE5;border-left:3px solid {{ it.bar }};background:{{ it.rowBg }};text-align:left;color:#17160F;cursor:pointer;width:100%;align-items:flex-start" style-hover="background:#FBFAF6">
+            <span style="width:40px;height:40px;border-radius:50%;background:#EFEDE6;display:grid;place-items:center;font-weight:700;font-size:13.5px;flex:none;position:relative">{{ it.ini }}<span title="{{ it.chLabel }}" style="position:absolute;right:-2px;bottom:-2px;width:14px;height:14px;border-radius:50%;background:{{ it.chDot }};border:2px solid #fff"></span></span>
+            <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:5px">
+              <span style="display:flex;align-items:baseline;gap:8px"><span style="flex:1;min-width:0;font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.nombre }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#8A877D;flex:none">{{ it.hora }}</span></span>
+              <span style="font-size:13px;color:#6B6960;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.preview }}</span>
+              <span style="display:flex;flex-wrap:wrap;gap:5px;align-items:center">
+                <span style="display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;background:{{ it.estBg }};color:{{ it.estFg }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ it.estColor }}"></span>{{ it.estNombre }}</span>
+                <span style="font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;background:{{ it.chBg }};color:{{ it.chFg }}">{{ it.chLabel }}</span>
+                <sc-if value="{{ it.esperando }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;background:{{ it.espBg }};color:{{ it.espFg }}"><span style="font-family:'Material Symbols Rounded';font-size:13px;line-height:1">schedule</span>{{ it.espLabel }}</span></sc-if>
+                <sc-if value="{{ it.hasAlert }}" hint-placeholder-val="{{ false }}"><span title="Alertas abiertas" style="display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:700;padding:2px 7px;border-radius:999px;background:{{ it.alertBg }};color:#fff"><span style="font-family:'Material Symbols Rounded';font-size:13px;line-height:1">notifications</span>{{ it.alertN }}</span></sc-if>
+              </span>
+            </span>
+          </button>
+        </sc-for>
+      </sc-if>
+      <sc-if value="{{ noItems }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:48px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px">
+          <span style="width:48px;height:48px;border-radius:50%;background:#F2EFE6;display:grid;place-items:center;font-family:'Material Symbols Rounded';font-size:24px;line-height:1;color:#6B6960">forum</span>
+          <span style="font-size:15px;font-weight:600">{{ emptyTitle }}</span>
+          <span style="font-size:13.5px;color:#6B6960;max-width:280px;line-height:1.5">{{ emptyText }}</span>
+          <sc-if value="{{ showClear }}" hint-placeholder-val="{{ false }}"><button onClick="{{ onClearFilters }}" style="margin-top:4px;height:38px;padding:0 14px;border:1px solid #DEDBD1;border-radius:9px;background:#fff;color:#17160F;font-size:13.5px;font-weight:600;cursor:pointer">Limpiar filtros</button></sc-if>
+        </div>
+      </sc-if>
+    </div>
+    </sc-if>
+    <sc-if value="{{ showDetailCol }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column;min-height:0;background:#F7F6F2">
+      <sc-if value="{{ noSel }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1;display:grid;place-items:center;padding:24px;text-align:center;color:#6B6960;font-size:14px">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:10px"><span style="font-family:'Material Symbols Rounded';font-size:34px;line-height:1;color:#B9B6AA">chat_bubble</span>Seleccioná una conversación para ver el hilo y el análisis de IA.</div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:none;display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fff;border-bottom:1px solid #E4E1D8;flex-wrap:wrap">
+          <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}"><button onClick="{{ d.onBack }}" title="Volver" style="width:40px;height:40px;margin-left:-8px;border:none;background:none;cursor:pointer;display:grid;place-items:center;color:#17160F"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1">arrow_back</span></button></sc-if>
+          <span style="width:40px;height:40px;border-radius:50%;background:#EFEDE6;display:grid;place-items:center;font-weight:700;font-size:13.5px;flex:none">{{ d.ini }}</span>
+          <div style="flex:1;min-width:140px;display:flex;flex-direction:column;gap:2px"><span style="font-weight:700;font-size:16px">{{ d.nombre }}</span><span style="font-size:12.5px;color:#6B6960">{{ d.sub }}</span></div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+            <span style="font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:{{ d.chBg }};color:{{ d.chFg }};display:inline-flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:{{ d.chDot }}"></span>{{ d.chLabel }}</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:{{ d.estBg }};color:{{ d.estFg }}"><span style="width:7px;height:7px;border-radius:50%;background:{{ d.estColor }}"></span>{{ d.estNombre }}</span>
+            <sc-if value="{{ d.esperando }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:{{ d.espBg }};color:{{ d.espFg }}"><span style="font-family:'Material Symbols Rounded';font-size:14px;line-height:1">schedule</span>{{ d.espLabel }}</span></sc-if>
+          </div>
+        </div>
+        <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:none;padding:8px 12px;background:#fff;border-bottom:1px solid #E4E1D8">
+            <div style="display:flex;gap:2px;padding:3px;background:#E9E6DE;border-radius:9px"><sc-for list="{{ d.tabs }}" as="o" hint-placeholder-count="2"><button onClick="{{ o.onClick }}" style="flex:1;padding:8px 11px;border-radius:7px;border:none;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }};font-size:13.5px;font-weight:{{ o.fw }};cursor:pointer;white-space:nowrap;min-height:38px">{{ o.label }}</button></sc-for></div>
+          </div>
+        </sc-if>
+        <div style="flex:1;min-height:0;display:flex">
+          <sc-if value="{{ showChat }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;min-height:0">
+              <div style="flex:1;min-height:0;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ d.thread }}" as="m" hint-placeholder-count="5">
+                  <sc-if value="{{ m.isDay }}" hint-placeholder-val="{{ false }}"><div style="align-self:center;font-size:11.5px;font-weight:600;color:#6B6960;background:#ECEAE3;padding:4px 11px;border-radius:999px;margin:6px 0">{{ m.label }}</div></sc-if>
+                  <sc-if value="{{ m.isMsg }}" hint-placeholder-val="{{ true }}">
+                    <div style="display:flex;flex-direction:column;align-items:{{ m.align }};gap:3px">
+                      <div style="max-width:min(80%,540px);padding:9px 12px;border-radius:{{ m.radius }};background:{{ m.bg }};border:1px solid {{ m.bd }};font-size:14px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;color:#17160F">{{ m.texto }}</div>
+                      <span style="font-size:11px;color:#8A877D;font-family:'IBM Plex Mono',monospace">{{ m.meta }}</span>
+                    </div>
+                  </sc-if>
+                </sc-for>
+              </div>
+              <div style="flex:none;display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 14px;background:#EFEDE6;border-top:1px solid #E4E1D8;color:#5E5B52;font-size:12.5px;text-align:center"><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1">visibility</span>{{ d.readOnly }}</div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ showPanel }}" hint-placeholder-val="{{ false }}">
+            <div style="width:{{ panelW }};flex:none;border-left:{{ panelBorder }};overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;background:#F4F3EF">
+              <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3 style="margin:0;font-size:14px;font-weight:700">Estado de venta</h3><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:{{ d.estBg }};color:{{ d.estFg }}"><span style="width:7px;height:7px;border-radius:50%;background:{{ d.estColor }}"></span>{{ d.estNombre }}</span></div>
+                <sc-if value="{{ d.canEditEstado }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:6px">
+                    <span style="font-size:12.5px;color:#6B6960">Corregir estado (queda registrado)</span>
+                    <select data-val="{{ d.estadoId }}" value="{{ d.estadoId }}" onChange="{{ d.onEstado }}" style="height:40px;padding:0 10px;border:1px solid #DEDBD1;border-radius:9px;background:#fff;font-size:14px;color:#17160F"><sc-for list="{{ d.estadoOpts }}" as="o" hint-placeholder-count="5"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select>
+                  </div>
+                </sc-if>
+                <div style="display:flex;flex-direction:column;gap:0">
+                  <span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A877D;margin-bottom:6px">Historial</span>
+                  <sc-for list="{{ d.hist }}" as="h" hint-placeholder-count="3">
+                    <div style="display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-top:1px solid #F0EEE8">
+                      <span style="width:8px;height:8px;border-radius:50%;background:{{ h.color }};margin-top:5px;flex:none"></span>
+                      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px"><span style="font-size:13px;font-weight:600">{{ h.nombre }}</span><span style="font-size:12px;color:#6B6960;display:flex;align-items:center;gap:4px"><span style="font-family:'Material Symbols Rounded';font-size:14px;line-height:1">{{ h.icon }}</span>{{ h.quien }}</span></div>
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A877D;white-space:nowrap">{{ h.fecha }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </section>
+              <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:14px">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+                  <h3 style="margin:0;font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:#C99F00">auto_awesome</span>Análisis de IA</h3>
+                  <button onClick="{{ d.onAnalizar }}" style="height:34px;padding:0 12px;border:1px solid #17160F;border-radius:8px;background:#17160F;color:#fff;font-size:12.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">refresh</span>{{ d.analizarLabel }}</button>
+                </div>
+                <sc-if value="{{ d.analizando }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#6B6960"><span style="width:14px;height:14px;border-radius:50%;border:2px solid #DEDBD1;border-top-color:#17160F;animation:nortSpin .8s linear infinite"></span>Analizando la conversación…</div>
+                    <div style="height:12px;border-radius:4px;background:#EEECE5;animation:nortPulse 1.2s ease-in-out infinite"></div>
+                    <div style="height:12px;width:80%;border-radius:4px;background:#EEECE5;animation:nortPulse 1.2s ease-in-out infinite"></div>
+                    <div style="height:12px;width:60%;border-radius:4px;background:#EEECE5;animation:nortPulse 1.2s ease-in-out infinite"></div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ d.notAnalizando }}" hint-placeholder-val="{{ true }}">
+                <sc-if value="{{ d.hasAn }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex;flex-direction:column;gap:14px">
+                    <div style="display:flex;justify-content:space-between;gap:10px;font-size:12px;color:#6B6960;flex-wrap:wrap"><span style="font-family:'IBM Plex Mono',monospace">{{ d.an.fecha }}</span><span>{{ d.an.motivo }}</span></div>
+                    <div style="display:flex;align-items:center;gap:14px;padding:12px;border-radius:10px;background:#FAF9F6">
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:32px;font-weight:600;color:{{ d.an.scoreColor }};line-height:1">{{ d.an.score }}</span>
+                      <span style="font-size:12.5px;color:#6B6960;line-height:1.4">Puntaje del vendedor en esta conversación, ponderado por criterio.</span>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A877D">Resumen</span><p style="margin:0;font-size:13.5px;line-height:1.5;text-wrap:pretty">{{ d.an.resumen }}</p></div>
+                    <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A877D">Intención del cliente</span><span style="font-size:13.5px;font-weight:600">{{ d.an.intencion }}</span></div>
+                    <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A877D">Productos mencionados</span>
+                      <sc-if value="{{ d.an.hasProductos }}" hint-placeholder-val="{{ true }}"><div style="display:flex;flex-wrap:wrap;gap:5px"><sc-for list="{{ d.an.productos }}" as="p" hint-placeholder-count="2"><span style="font-size:12px;padding:3px 9px;border-radius:6px;background:#F2EFE6;border:1px solid #E4E1D8">{{ p.p }}</span></sc-for></div></sc-if>
+                      <sc-if value="{{ d.an.noProductos }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#8A877D">Ninguno todavía</span></sc-if>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A877D">Objeciones detectadas</span>
+                      <sc-if value="{{ d.an.hasObjeciones }}" hint-placeholder-val="{{ true }}"><div style="display:flex;flex-direction:column;gap:4px"><sc-for list="{{ d.an.objeciones }}" as="o" hint-placeholder-count="2"><span style="font-size:13px;display:flex;gap:6px;align-items:flex-start"><span style="font-family:'Material Symbols Rounded';font-size:15px;line-height:1.3;color:#C98500">report</span>{{ o.o }}</span></sc-for></div></sc-if>
+                      <sc-if value="{{ d.an.noObjeciones }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#8A877D">Sin objeciones</span></sc-if>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:4px;padding:12px;border-radius:10px;background:#FFF6CC;border:1px solid #F0DC8A"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#6B5300">Próximo paso sugerido</span><span style="font-size:13.5px;line-height:1.45">{{ d.an.proximo }}</span></div>
+                    <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A877D">Evaluación del vendedor</span>
+                      <sc-for list="{{ d.an.crit }}" as="c" hint-placeholder-count="4">
+                        <div style="display:flex;flex-direction:column;gap:5px">
+                          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:13px;font-weight:600">{{ c.nombre }} <span style="font-weight:400;color:#8A877D;font-size:11.5px">{{ c.peso }}</span></span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:{{ c.color }}">{{ c.puntaje }}/10</span></div>
+                          <div style="height:6px;border-radius:3px;background:#EEECE5;overflow:hidden"><div style="height:100%;width:{{ c.w }};background:{{ c.color }};border-radius:3px"></div></div>
+                          <span style="font-size:12.5px;color:#5E5B52;line-height:1.4">{{ c.comentario }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ d.noAn }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:16px;border-radius:10px;background:#FAF9F6;border:1px dashed #DEDBD1;font-size:13px;color:#5E5B52;line-height:1.5;display:flex;flex-direction:column;gap:4px"><b style="color:#17160F">Todavía sin análisis</b>{{ d.noAnText }}</div>
+                </sc-if>
+                </sc-if>
+              </section>
+              <sc-if value="{{ d.showAlerts }}" hint-placeholder-val="{{ false }}">
+              <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px">
+                <h3 style="margin:0;font-size:14px;font-weight:700">Alertas de la conversación</h3>
+                <sc-if value="{{ d.noAlerts }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#8A877D">Sin alertas.</span></sc-if>
+                <sc-for list="{{ d.alerts }}" as="a" hint-placeholder-count="1">
+                  <div style="border:1px solid #E4E1D8;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px">
+                    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span style="display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:6px;background:{{ a.lvBg }};color:{{ a.lvFg }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ a.lvDot }}"></span>{{ a.nivelLabel }}</span><span style="font-size:13px;font-weight:600;flex:1;min-width:0">{{ a.titulo }}</span></div>
+                    <span style="font-size:12.5px;color:#5E5B52;line-height:1.45">{{ a.motivo }}</span>
+                    <sc-if value="{{ a.atendida }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#16703D;display:flex;gap:5px;align-items:center"><span style="font-family:'Material Symbols Rounded';font-size:15px;line-height:1">check_circle</span>{{ a.atendidaTxt }}</span></sc-if>
+                    <sc-if value="{{ a.hasComentario }}" hint-placeholder-val="{{ false }}"><span style="font-size:12.5px;color:#5E5B52;font-style:italic">“{{ a.comentario }}”</span></sc-if>
+                    <sc-if value="{{ a.canResolve }}" hint-placeholder-val="{{ false }}"><button onClick="{{ a.onResolve }}" style="align-self:flex-start;height:34px;padding:0 12px;border:1px solid #DEDBD1;border-radius:8px;background:#fff;color:#17160F;font-size:12.5px;font-weight:600;cursor:pointer">Marcar como atendida</button></sc-if>
+                    <sc-if value="{{ a.isResolving }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;flex-direction:column;gap:8px">
+                        <textarea value="{{ a.resolveComment }}" onChange="{{ a.onResolveComment }}" rows="2" placeholder="Comentario opcional…" style="padding:9px 11px;border:1px solid #DEDBD1;border-radius:8px;font-size:13px;resize:vertical;color:#17160F"></textarea>
+                        <div style="display:flex;gap:8px"><button onClick="{{ a.onConfirm }}" style="height:34px;padding:0 12px;border:none;border-radius:8px;background:#17160F;color:#fff;font-size:12.5px;font-weight:600;cursor:pointer">Confirmar</button><button onClick="{{ a.onCancel }}" style="height:34px;padding:0 12px;border:1px solid #DEDBD1;border-radius:8px;background:#fff;color:#17160F;font-size:12.5px;cursor:pointer">Cancelar</button></div>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </section>
+              </sc-if>
+              <sc-if value="{{ d.showNotes }}" hint-placeholder-val="{{ false }}">
+              <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px">
+                <h3 style="margin:0;font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;color:#6B6960">lock</span>Notas internas</h3>
+                <sc-if value="{{ d.noNotas }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#8A877D">Sin notas. Solo supervisión y administración las ven.</span></sc-if>
+                <sc-for list="{{ d.notas }}" as="n" hint-placeholder-count="1">
+                  <div style="padding:10px 12px;border-radius:9px;background:#FAF9F6;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;line-height:1.45">{{ n.texto }}</span><span style="font-size:11.5px;color:#8A877D">{{ n.autor }} · <span style="font-family:'IBM Plex Mono',monospace">{{ n.fecha }}</span></span></div>
+                </sc-for>
+                <textarea value="{{ d.noteDraft }}" onChange="{{ d.onNote }}" rows="2" placeholder="Agregar una nota interna…" style="padding:9px 11px;border:1px solid #DEDBD1;border-radius:8px;font-size:13.5px;resize:vertical;color:#17160F"></textarea>
+                <button onClick="{{ d.onAddNote }}" style="align-self:flex-end;height:36px;padding:0 14px;border:none;border-radius:8px;background:#17160F;color:#fff;font-size:13px;font-weight:600;cursor:pointer;opacity:{{ d.noteBtnOp }}">Agregar nota</button>
+              </section>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+    </div>
+    </sc-if>
+  </div>
+  </sc-if>
+  <sc-if value="{{ isKanban }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;min-height:0;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(250px,1fr);gap:12px;overflow-x:auto;padding:16px 28px 20px">
+      <sc-for list="{{ kCols }}" as="col" hint-placeholder-count="5">
+        <div style="display:flex;flex-direction:column;min-height:0;background:#ECEAE3;border-radius:12px">
+          <div style="display:flex;align-items:center;gap:8px;padding:12px 12px 8px;flex:none"><span style="width:9px;height:9px;border-radius:50%;background:{{ col.color }}"></span><span style="font-size:13.5px;font-weight:700;flex:1">{{ col.nombre }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6B6960">{{ col.count }}</span></div>
+          <div style="flex:1;min-height:0;overflow-y:auto;padding:4px 8px 10px;display:flex;flex-direction:column;gap:8px">
+            <sc-if value="{{ col.empty }}" hint-placeholder-val="{{ false }}"><div style="padding:18px 8px;text-align:center;font-size:12.5px;color:#8A877D;border:1px dashed #D3D0C6;border-radius:9px">Sin conversaciones</div></sc-if>
+            <sc-for list="{{ col.cards }}" as="it" hint-placeholder-count="2">
+              <button onClick="{{ it.onClick }}" style="text-align:left;background:#fff;border:1px solid #E4E1D8;border-radius:10px;padding:11px 12px;display:flex;flex-direction:column;gap:6px;cursor:pointer;color:#17160F" style-hover="border-color:#17160F">
+                <span style="display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:50%;background:{{ it.chDot }};flex:none"></span><span style="flex:1;min-width:0;font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.nombre }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A877D">{{ it.hora }}</span></span>
+                <span style="font-size:12.5px;color:#6B6960;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ it.preview }}</span>
+                <span style="display:flex;flex-wrap:wrap;gap:5px">
+                  <sc-if value="{{ it.esperando }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;background:{{ it.espBg }};color:{{ it.espFg }}">{{ it.espLabel }}</span></sc-if>
+                  <sc-if value="{{ it.hasAlert }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;background:{{ it.alertBg }};color:#fff">{{ it.alertN }} alerta</span></sc-if>
+                </span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+<sc-if value="{{ isPerf }}" hint-placeholder-val="{{ false }}">
+<div style="padding:{{ pad }};display:flex;flex-direction:column;gap:18px;max-width:1440px;width:100%">
+  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px 20px">
+    <div style="display:flex;flex-direction:column;gap:4px"><h1 style="margin:0;font-size:{{ h1Size }};font-weight:700;letter-spacing:-.01em">{{ perfTitle }}</h1><span style="color:#6B6960;font-size:14px">{{ perfWho }} · {{ rangeLabel }} · {{ canalLabel }}</span></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;gap:2px;padding:3px;background:#E9E6DE;border-radius:9px"><sc-for list="{{ rangeOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.onClick }}" style="padding:6px 11px;border-radius:7px;border:none;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }};font-size:13px;font-weight:{{ o.fw }};cursor:pointer;white-space:nowrap;min-height:32px">{{ o.label }}</button></sc-for></div>
+      <div style="display:flex;gap:2px;padding:3px;background:#E9E6DE;border-radius:9px"><sc-for list="{{ canalOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.onClick }}" style="padding:6px 11px;border-radius:7px;border:none;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }};font-size:13px;font-weight:{{ o.fw }};cursor:pointer;white-space:nowrap;min-height:32px">{{ o.label }}</button></sc-for></div>
+    </div>
+  </div>
+  <sc-if value="{{ noPerf }}" hint-placeholder-val="{{ false }}">
+    <div style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:48px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px"><span style="font-family:'Material Symbols Rounded';font-size:30px;line-height:1;color:#B9B6AA">insights</span><span style="font-weight:600">Sin conversaciones analizadas</span><span style="font-size:13.5px;color:#6B6960">Probá con otro rango de fechas o canal.</span></div>
+  </sc-if>
+  <sc-if value="{{ hasPerf }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex;flex-wrap:wrap;gap:14px">
+    <section style="flex:1 1 260px;background:#17160F;color:#fff;border-radius:12px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;min-height:200px">
+      <span style="font-size:13px;color:#C9C6BA">Puntaje general</span>
+      <div style="display:flex;align-items:baseline;gap:6px"><span style="font-family:'IBM Plex Mono',monospace;font-size:64px;font-weight:600;letter-spacing:-.04em;line-height:1;color:#F2C200">{{ general }}</span><span style="font-size:16px;color:#A8A598">/10</span></div>
+      <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:13px"><span style="font-weight:600">{{ gLabel }}</span><span style="color:#A8A598">{{ nAnalizadas }}</span></div>
+    </section>
+    <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px;flex:3 1 420px;min-width:0">
+      <h2 style="margin:0;font-size:15px;font-weight:700">Por criterio</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:16px 20px">
+        <sc-for list="{{ perfCrit }}" as="c" hint-placeholder-count="4">
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:13.5px;font-weight:600">{{ c.nombre }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;color:{{ c.color }}">{{ c.value }}</span></div>
+            <div style="height:8px;border-radius:4px;background:#EEECE5;overflow:hidden"><div style="height:100%;width:{{ c.w }};background:{{ c.color }};border-radius:4px"></div></div>
+            <span style="font-size:12px;color:#8A877D">{{ c.peso }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:14px">
+    <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px"><h2 style="margin:0;font-size:15px;font-weight:700">Evolución del puntaje</h2><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#6B6960">último día <b style="color:#17160F">{{ pChart.last }}</b></span></div>
+      <sc-if value="{{ pChart.has }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px">
+          <div style="display:flex;flex-direction:column;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A877D;height:160px;text-align:right"><span>{{ pChart.y0 }}</span><span>{{ pChart.y1 }}</span><span>{{ pChart.y2 }}</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+            <svg viewBox="0 0 600 160" preserveAspectRatio="none" style="width:100%;height:160px;display:block;overflow:visible">
+              <line x1="0" y1="8" x2="600" y2="8" style="stroke:#EEECE5;stroke-width:1;vector-effect:non-scaling-stroke"></line>
+              <line x1="0" y1="80" x2="600" y2="80" style="stroke:#EEECE5;stroke-width:1;vector-effect:non-scaling-stroke"></line>
+              <line x1="0" y1="152" x2="600" y2="152" style="stroke:#E4E1D8;stroke-width:1;vector-effect:non-scaling-stroke"></line>
+              <polygon points="{{ pChart.area }}" style="fill:#F2C200;fill-opacity:.16"></polygon>
+              <polyline points="{{ pChart.pts }}" style="fill:none;stroke:#17160F;stroke-width:2;vector-effect:non-scaling-stroke;stroke-linejoin:round"></polyline>
+            </svg>
+            <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A877D"><span>{{ pChart.x0 }}</span><span>{{ pChart.x1 }}</span><span>{{ pChart.x2 }}</span></div>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ pChart.none }}" hint-placeholder-val="{{ false }}"><div style="height:160px;display:grid;place-items:center;color:#6B6960;font-size:14px;background:#FAF9F6;border-radius:8px">Sin datos para el período.</div></sc-if>
+    </section>
+    <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:15px;font-weight:700">Comparación por canal</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:18px">
+        <sc-for list="{{ byCh }}" as="ch" hint-placeholder-count="2">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:8px"><span style="width:9px;height:9px;border-radius:50%;background:{{ ch.dot }}"></span><span style="font-weight:700;font-size:14px;flex:1">{{ ch.label }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:600;color:{{ ch.gColor }}">{{ ch.general }}</span></div>
+            <span style="font-size:12px;color:#8A877D;margin-top:-6px">{{ ch.n }}</span>
+            <sc-for list="{{ ch.crit }}" as="c" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) 60px 30px;gap:8px;align-items:center;font-size:12.5px">
+                <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#5E5B52">{{ c.nombre }}</span>
+                <div style="height:6px;border-radius:3px;background:#EEECE5;overflow:hidden"><div style="height:100%;width:{{ c.w }};background:{{ c.color }}"></div></div>
+                <span style="font-family:'IBM Plex Mono',monospace;text-align:right;font-weight:600">{{ c.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:14px">
+    <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px">
+      <h2 style="margin:0;font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:#1E8E4E">arrow_upward</span>Mejor puntaje</h2>
+      <sc-for list="{{ best }}" as="b" hint-placeholder-count="3">
+        <button onClick="{{ b.onClick }}" style="display:flex;gap:12px;align-items:flex-start;text-align:left;padding:11px 0;border:none;border-top:1px solid #EEECE5;background:none;color:#17160F;cursor:pointer;width:100%">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;color:{{ b.color }};width:40px;flex:none">{{ b.score }}</span>
+          <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:{{ b.chDot }}"></span>{{ b.nombre }} <span style="font-weight:400;color:#8A877D">· {{ b.estado }}</span></span><span style="font-size:12.5px;color:#6B6960;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ b.resumen }}</span></span>
+        </button>
+      </sc-for>
+    </section>
+    <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px">
+      <h2 style="margin:0;font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:#C62828">arrow_downward</span>Peor puntaje</h2>
+      <sc-for list="{{ worst }}" as="b" hint-placeholder-count="3">
+        <button onClick="{{ b.onClick }}" style="display:flex;gap:12px;align-items:flex-start;text-align:left;padding:11px 0;border:none;border-top:1px solid #EEECE5;background:none;color:#17160F;cursor:pointer;width:100%">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;color:{{ b.color }};width:40px;flex:none">{{ b.score }}</span>
+          <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:{{ b.chDot }}"></span>{{ b.nombre }} <span style="font-weight:400;color:#8A877D">· {{ b.estado }}</span></span><span style="font-size:12.5px;color:#6B6960;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ b.resumen }}</span></span>
+        </button>
+      </sc-for>
+    </section>
+  </div>
+  <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap"><h2 style="margin:0;font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:#C99F00">auto_awesome</span>Devolución de la IA</h2><span style="font-size:12px;color:#8A877D">{{ resumenFecha }}</span></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px">
+      <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#16703D">Fortalezas</span>
+        <sc-for list="{{ fortalezas }}" as="f" hint-placeholder-count="3"><div style="display:flex;gap:8px;font-size:13.5px;line-height:1.45"><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1.2;color:#1E8E4E">check</span><span>{{ f.t }}</span></div></sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#B3261E">Aspectos a mejorar</span>
+        <sc-for list="{{ mejoras }}" as="f" hint-placeholder-count="3"><div style="display:flex;gap:8px;font-size:13.5px;line-height:1.45"><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1.2;color:#C62828">trending_flat</span><span>{{ f.t }}</span></div></sc-for>
+      </div>
+    </div>
+  </section>
+  </sc-if>
+</div>
+</sc-if>
+<sc-if value="{{ isAlerts }}" hint-placeholder-val="{{ false }}">
+<div style="padding:{{ pad }};display:flex;flex-direction:column;gap:16px;max-width:1100px;width:100%">
+  <div style="display:flex;flex-direction:column;gap:4px"><h1 style="margin:0;font-size:{{ h1Size }};font-weight:700;letter-spacing:-.01em">Alertas</h1><span style="color:#6B6960;font-size:14px">Ordenadas por urgencia · {{ canalLabel }}</span></div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px">
+    <div style="display:flex;gap:2px;padding:3px;background:#E9E6DE;border-radius:9px;overflow-x:auto;max-width:100%"><sc-for list="{{ aEstadoOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.onClick }}" style="padding:6px 11px;border-radius:7px;border:none;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }};font-size:13px;font-weight:{{ o.fw }};cursor:pointer;white-space:nowrap;min-height:34px">{{ o.label }}</button></sc-for></div>
+    <div style="display:flex;gap:2px;padding:3px;background:#E9E6DE;border-radius:9px;overflow-x:auto;max-width:100%"><sc-for list="{{ aTipoOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.onClick }}" style="padding:6px 11px;border-radius:7px;border:none;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }};font-size:13px;font-weight:{{ o.fw }};cursor:pointer;white-space:nowrap;min-height:34px">{{ o.label }}</button></sc-for></div>
+    <div style="display:flex;gap:2px;padding:3px;background:#E9E6DE;border-radius:9px;overflow-x:auto;max-width:100%"><sc-for list="{{ aNivelOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.onClick }}" style="padding:6px 11px;border-radius:7px;border:none;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }};font-size:13px;font-weight:{{ o.fw }};cursor:pointer;white-space:nowrap;min-height:34px">{{ o.label }}</button></sc-for></div>
+    <div style="display:flex;gap:2px;padding:3px;background:#E9E6DE;border-radius:9px;overflow-x:auto;max-width:100%"><sc-for list="{{ canalOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.onClick }}" style="padding:6px 11px;border-radius:7px;border:none;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }};font-size:13px;font-weight:{{ o.fw }};cursor:pointer;white-space:nowrap;min-height:34px">{{ o.label }}</button></sc-for></div>
+  </div>
+  <sc-if value="{{ noAlertList }}" hint-placeholder-val="{{ false }}">
+    <div style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:48px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px"><span style="width:52px;height:52px;border-radius:50%;background:#E2F3E8;display:grid;place-items:center;font-family:'Material Symbols Rounded';font-size:26px;line-height:1;color:#1E8E4E">task_alt</span><span style="font-weight:600;font-size:15px">{{ alertEmptyTitle }}</span><span style="font-size:13.5px;color:#6B6960;max-width:340px;line-height:1.5">{{ alertEmptyText }}</span></div>
+  </sc-if>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <sc-for list="{{ alertList }}" as="a" hint-placeholder-count="4">
+      <article style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:4px 9px;border-radius:6px;background:{{ a.lvBg }};color:{{ a.lvFg }}"><span style="width:7px;height:7px;border-radius:50%;background:{{ a.lvDot }}"></span>{{ a.nivelLabel }}</span>
+          <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#5E5B52"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">{{ a.tipoIcon }}</span>{{ a.tipoLabel }}</span>
+          <span style="flex:1"></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#8A877D" title="{{ a.hora }}">{{ a.ago }}</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:16px;font-weight:700">{{ a.titulo }}</span>
+          <span style="font-size:13px;color:#5E5B52;display:flex;align-items:center;gap:6px;flex-wrap:wrap">{{ a.cliente }} <span style="color:#B9B6AA">·</span> {{ a.usuario }} <span style="font-size:11.5px;font-weight:600;padding:1px 8px;border-radius:999px;background:{{ a.chBg }};color:{{ a.chFg }}">{{ a.chLabel }}</span></span>
+        </div>
+        <p style="margin:0;font-size:13.5px;line-height:1.5;text-wrap:pretty">{{ a.motivo }}</p>
+        <sc-if value="{{ a.hasFrag }}" hint-placeholder-val="{{ true }}"><blockquote style="margin:0;padding:10px 12px;border-radius:9px;background:#FAF9F6;border:1px solid #EEECE5;font-size:13.5px;line-height:1.45;color:#3A3830;display:flex;gap:8px"><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1.2;color:#A19E92">format_quote</span><span>{{ a.frag }}</span></blockquote></sc-if>
+        <sc-if value="{{ a.atendida }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:4px;padding:10px 12px;border-radius:9px;background:#EEF7F1"><span style="font-size:12.5px;color:#16703D;font-weight:600;display:flex;align-items:center;gap:5px"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">check_circle</span>{{ a.atendidaTxt }}</span><sc-if value="{{ a.hasComentario }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#3A3830">{{ a.comentario }}</span></sc-if></div>
+        </sc-if>
+        <sc-if value="{{ a.isResolving }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <textarea value="{{ a.resolveComment }}" onChange="{{ a.onResolveComment }}" rows="2" placeholder="Comentario opcional (qué se hizo)…" style="padding:10px 12px;border:1px solid #DEDBD1;border-radius:9px;font-size:14px;resize:vertical;color:#17160F"></textarea>
+            <div style="display:flex;gap:8px;flex-wrap:wrap"><button onClick="{{ a.onConfirm }}" style="height:40px;padding:0 14px;border:none;border-radius:9px;background:#17160F;color:#fff;font-size:13.5px;font-weight:600;cursor:pointer">Confirmar atendida</button><button onClick="{{ a.onCancel }}" style="height:40px;padding:0 14px;border:1px solid #DEDBD1;border-radius:9px;background:#fff;color:#17160F;font-size:13.5px;cursor:pointer">Cancelar</button></div>
+          </div>
+        </sc-if>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onClick="{{ a.onOpen }}" style="height:40px;padding:0 14px;border:1px solid #DEDBD1;border-radius:9px;background:#fff;color:#17160F;font-size:13.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1">forum</span>Ver conversación</button>
+          <sc-if value="{{ a.canResolve }}" hint-placeholder-val="{{ true }}"><button onClick="{{ a.onResolve }}" style="height:40px;padding:0 14px;border:none;border-radius:9px;background:#F2C200;color:#17160F;font-size:13.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1">done</span>Marcar como atendida</button></sc-if>
+        </div>
+      </article>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+<sc-if value="{{ isCfg }}" hint-placeholder-val="{{ false }}">
+<div style="padding:{{ pad }};display:flex;flex-direction:column;gap:16px;max-width:1000px;width:100%">
+  <div style="display:flex;flex-direction:column;gap:4px"><h1 style="margin:0;font-size:{{ h1Size }};font-weight:700;letter-spacing:-.01em">Configuración</h1><span style="color:#6B6960;font-size:14px">Solo visible para administradores.</span></div>
+  <div style="display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid #E4E1D8;margin:0 -2px">
+    <sc-for list="{{ cfgTabs }}" as="t" hint-placeholder-count="6">
+      <button onClick="{{ t.onClick }}" style="flex:none;padding:10px 12px 9px;border:none;border-bottom:3px solid {{ t.bar }};background:none;color:{{ t.fg }};font-size:14px;font-weight:{{ t.fw }};cursor:pointer;white-space:nowrap;min-height:44px">{{ t.label }}</button>
+    </sc-for>
+  </div>
+  <sc-if value="{{ isConnTab }}" hint-placeholder-val="{{ true }}">
+    <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:15px;font-weight:700">{{ conn.titulo }}</span><span style="font-size:13px;color:#6B6960;font-family:'IBM Plex Mono',monospace">{{ conn.cuenta }}</span></div>
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:999px;background:{{ conn.bg }};color:{{ conn.fg }}"><span style="width:8px;height:8px;border-radius:50%;background:{{ conn.dot }}"></span>{{ conn.label }}</span>
+      </div>
+      <span style="font-size:13px;color:#5E5B52">{{ conn.detail }}</span>
+      <sc-if value="{{ conn.showQR }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+          <div style="width:180px;height:180px;border-radius:10px;border:1px solid #DEDBD1;background:repeating-linear-gradient(45deg,#F4F3EF 0 8px,#ECEAE3 8px 16px);display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6B6960;text-align:center">código QR<br>de Evolution API</div>
+          <div style="display:flex;flex-direction:column;gap:8px;max-width:320px;font-size:13px;color:#5E5B52;line-height:1.5">El código se renueva cada 40 segundos. Abrí WhatsApp en el teléfono del local › Dispositivos vinculados › Vincular dispositivo.<button onClick="{{ conn.onScan }}" style="align-self:flex-start;height:36px;padding:0 12px;border:1px solid #DEDBD1;border-radius:8px;background:#fff;color:#17160F;font-size:13px;font-weight:600;cursor:pointer">Simular escaneo</button></div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ conn.hasResult }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:9px;background:{{ conn.resultBg }};color:{{ conn.resultFg }};font-size:13.5px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1">{{ conn.resultIcon }}</span>{{ conn.resultMsg }}</div></sc-if>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onClick="{{ conn.onTest }}" style="height:40px;padding:0 14px;border:none;border-radius:9px;background:#17160F;color:#fff;font-size:13.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1">network_check</span>{{ conn.testLabel }}</button>
+        <sc-if value="{{ conn.showQRBtn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ conn.onQR }}" style="height:40px;padding:0 14px;border:1px solid #DEDBD1;border-radius:9px;background:#fff;color:#17160F;font-size:13.5px;font-weight:600;cursor:pointer">Generar QR</button></sc-if>
+        <sc-if value="{{ conn.showDisconnect }}" hint-placeholder-val="{{ false }}"><button onClick="{{ conn.onDisconnect }}" style="height:40px;padding:0 14px;border:1px solid #DEDBD1;border-radius:9px;background:#fff;color:#B3261E;font-size:13.5px;font-weight:600;cursor:pointer">Desconectar</button></sc-if>
+      </div>
+    </section>
+  </sc-if>
+  <sc-if value="{{ hasFields }}" hint-placeholder-val="{{ true }}">
+    <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:16px">
+      <h2 style="margin:0;font-size:15px;font-weight:700">{{ cfgFieldsTitle }}</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:16px">
+        <sc-for list="{{ cfgFields }}" as="f" hint-placeholder-count="4">
+          <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+            <span style="font-size:13px;font-weight:600">{{ f.label }}</span>
+            <div style="display:flex;gap:6px;align-items:center">
+              <input type="{{ f.type }}" value="{{ f.value }}" onChange="{{ f.onChange }}" readOnly="{{ f.readonly }}" placeholder="{{ f.ph }}" style="flex:1;min-width:0;height:40px;padding:0 11px;border:1px solid #DEDBD1;border-radius:9px;background:{{ f.inBg }};font-family:'IBM Plex Mono',monospace;font-size:13px;color:#17160F;outline:none">
+              <sc-if value="{{ f.hasSuffix }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#6B6960;white-space:nowrap">{{ f.suffix }}</span></sc-if>
+              <sc-if value="{{ f.isSecret }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ f.onReveal }}" title="{{ f.revTitle }}" style="width:40px;height:40px;flex:none;border:1px solid #DEDBD1;border-radius:9px;background:#fff;cursor:pointer;display:grid;place-items:center;color:#5E5B52"><span style="font-family:'Material Symbols Rounded';font-size:19px;line-height:1">{{ f.revIcon }}</span></button></sc-if>
+              <sc-if value="{{ f.isCopy }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ f.onCopy }}" style="height:40px;flex:none;padding:0 12px;border:1px solid #DEDBD1;border-radius:9px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:5px;color:#17160F;font-size:13px;font-weight:600"><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1">content_copy</span>Copiar</button></sc-if>
+            </div>
+            <sc-if value="{{ f.hasHelp }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#8A877D;line-height:1.4">{{ f.help }}</span></sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ isIA }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:8px;padding:11px 13px;border-radius:9px;background:#FFF6CC;border:1px solid #F0DC8A;font-size:13px;line-height:1.5"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1.2;color:#6B5300">info</span><span>{{ iaRule }}</span></div></sc-if>
+      <sc-if value="{{ isAlertasTab }}" hint-placeholder-val="{{ false }}"><sc-if value="{{ thrWarn }}" hint-placeholder-val="{{ false }}"><div style="padding:10px 12px;border-radius:9px;background:#FBE4E1;color:#B3261E;font-size:13px">{{ thrWarnTxt }}</div></sc-if></sc-if>
+    </section>
+  </sc-if>
+  <sc-if value="{{ isIA }}" hint-placeholder-val="{{ false }}">
+    <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:16px">
+      <h2 style="margin:0;font-size:15px;font-weight:700">Proveedor y modelo</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:16px">
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600">Proveedor</span><select data-val="{{ proveedor }}" value="{{ proveedor }}" onChange="{{ onProv }}" style="height:40px;padding:0 10px;border:1px solid #DEDBD1;border-radius:9px;background:#fff;font-size:14px;color:#17160F"><sc-for list="{{ provOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600">Modelo</span><select data-val="{{ modelo }}" value="{{ modelo }}" onChange="{{ onModelo }}" style="height:40px;padding:0 10px;border:1px solid #DEDBD1;border-radius:9px;background:#fff;font-size:14px;color:#17160F;font-family:'IBM Plex Mono',monospace"><sc-for list="{{ modelOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select></div>
+        <div style="display:flex;flex-direction:column;gap:6px;min-width:0"><span style="font-size:13px;font-weight:600">{{ iaKey.label }}</span>
+          <div style="display:flex;gap:6px"><input type="{{ iaKey.type }}" value="{{ iaKey.value }}" onChange="{{ iaKey.onChange }}" style="flex:1;min-width:0;height:40px;padding:0 11px;border:1px solid #DEDBD1;border-radius:9px;background:#fff;font-family:'IBM Plex Mono',monospace;font-size:13px;color:#17160F;outline:none"><button type="button" onClick="{{ iaKey.onReveal }}" title="{{ iaKey.revTitle }}" style="width:40px;height:40px;flex:none;border:1px solid #DEDBD1;border-radius:9px;background:#fff;cursor:pointer;display:grid;place-items:center;color:#5E5B52"><span style="font-family:'Material Symbols Rounded';font-size:19px;line-height:1">{{ iaKey.revIcon }}</span></button></div>
+        </div>
+      </div>
+    </section>
+    <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="margin:0;font-size:15px;font-weight:700">Peso de cada criterio en el puntaje general</h2><span style="font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:999px;background:{{ pesoBg }};color:{{ pesoFg }};font-family:'IBM Plex Mono',monospace">{{ pesoMsg }}</span></div>
+      <sc-for list="{{ pesos }}" as="p" hint-placeholder-count="4">
+        <div style="display:grid;grid-template-columns:minmax(130px,200px) minmax(0,1fr) 52px;gap:14px;align-items:center">
+          <span style="font-size:13.5px;font-weight:500">{{ p.nombre }}</span>
+          <input type="range" min="0" max="60" step="5" value="{{ p.value }}" onChange="{{ p.onChange }}" style="width:100%;accent-color:#17160F">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;text-align:right">{{ p.label }}</span>
+        </div>
+      </sc-for>
+      <sc-if value="{{ pesoOff }}" hint-placeholder-val="{{ false }}"><button onClick="{{ onNormalizar }}" style="align-self:flex-start;height:36px;padding:0 12px;border:1px solid #DEDBD1;border-radius:8px;background:#fff;color:#17160F;font-size:13px;font-weight:600;cursor:pointer">Ajustar a 100%</button></sc-if>
+    </section>
+  </sc-if>
+  <sc-if value="{{ isAlertasTab }}" hint-placeholder-val="{{ false }}">
+    <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:12px">
+      <h2 style="margin:0;font-size:15px;font-weight:700">Horario de atención</h2>
+      <div style="display:flex;flex-direction:column">
+        <sc-for list="{{ horario }}" as="h" hint-placeholder-count="7">
+          <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #F0EEE8;flex-wrap:wrap">
+            <button onClick="{{ h.toggle.onToggle }}" style="width:40px;height:24px;border-radius:12px;border:none;background:{{ h.toggle.trackBg }};position:relative;cursor:pointer;flex:none;padding:0"><span style="position:absolute;top:3px;left:{{ h.toggle.knobLeft }};width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 2px rgba(0,0,0,.2)"></span></button>
+            <span style="width:90px;font-size:14px;font-weight:600">{{ h.dia }}</span>
+            <div style="display:flex;align-items:center;gap:8px;opacity:{{ h.op }}">
+              <input type="time" value="{{ h.desde }}" onChange="{{ h.onDesde }}" style="height:38px;padding:0 8px;border:1px solid #DEDBD1;border-radius:8px;background:#fff;font-family:'IBM Plex Mono',monospace;font-size:13px;color:#17160F">
+              <span style="color:#8A877D;font-size:13px">a</span>
+              <input type="time" value="{{ h.hasta }}" onChange="{{ h.onHasta }}" style="height:38px;padding:0 8px;border:1px solid #DEDBD1;border-radius:8px;background:#fff;font-family:'IBM Plex Mono',monospace;font-size:13px;color:#17160F">
+            </div>
+            <span style="font-size:12.5px;color:#8A877D">{{ h.estado }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;background:#FAF9F6">
+        <button onClick="{{ pausaTg.onToggle }}" style="width:40px;height:24px;border-radius:12px;border:none;background:{{ pausaTg.trackBg }};position:relative;cursor:pointer;flex:none;padding:0"><span style="position:absolute;top:3px;left:{{ pausaTg.knobLeft }};width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 2px rgba(0,0,0,.2)"></span></button>
+        <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13.5px;font-weight:600">Pausar el conteo de espera fuera de horario</span><span style="font-size:12.5px;color:#6B6960">Un mensaje recibido a la noche empieza a contar al abrir.</span></div>
+      </div>
+    </section>
+    <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:6px">
+      <h2 style="margin:0 0 6px;font-size:15px;font-weight:700">Situaciones que disparan intervención de supervisor</h2>
+      <sc-for list="{{ situaciones }}" as="x" hint-placeholder-count="5">
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid #F0EEE8">
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font-size:13.5px;font-weight:600">{{ x.nombre }}</span><span style="font-size:12.5px;color:#6B6960;line-height:1.4">{{ x.desc }}</span></div>
+          <button onClick="{{ x.toggle.onToggle }}" style="width:40px;height:24px;border-radius:12px;border:none;background:{{ x.toggle.trackBg }};position:relative;cursor:pointer;flex:none;padding:0"><span style="position:absolute;top:3px;left:{{ x.toggle.knobLeft }};width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 2px rgba(0,0,0,.2)"></span></button>
+        </div>
+      </sc-for>
+    </section>
+    <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:6px">
+      <h2 style="margin:0 0 6px;font-size:15px;font-weight:700">Canales de notificación</h2>
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid #F0EEE8">
+        <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:13.5px;font-weight:600">Dentro de la app</span><span style="font-size:12.5px;color:#6B6960">Contador en la navegación y bandeja de alertas.</span></div>
+        <button onClick="{{ notifTg.onToggle }}" style="width:40px;height:24px;border-radius:12px;border:none;background:{{ notifTg.trackBg }};position:relative;cursor:pointer;flex:none;padding:0"><span style="position:absolute;top:3px;left:{{ notifTg.knobLeft }};width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 2px rgba(0,0,0,.2)"></span></button>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid #F0EEE8;opacity:.55">
+        <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:8px">Email <span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;background:#ECEAE3;color:#5E5B52">Próximamente</span></span><span style="font-size:12.5px;color:#6B6960">Resumen y alertas críticas por correo.</span></div>
+        <span style="width:40px;height:24px;border-radius:12px;background:#E4E1D8;position:relative;flex:none"><span style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff"></span></span>
+      </div>
+    </section>
+  </sc-if>
+  <sc-if value="{{ isEstados }}" hint-placeholder-val="{{ false }}">
+    <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:6px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px"><div style="display:flex;flex-direction:column;gap:2px"><h2 style="margin:0;font-size:15px;font-weight:700">Estados de venta</h2><span style="font-size:12.5px;color:#6B6960">La IA asigna estos estados; los inactivos dejan de usarse.</span></div><button onClick="{{ onAddEstado }}" style="height:38px;padding:0 13px;border:none;border-radius:9px;background:#17160F;color:#fff;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1">add</span>Agregar estado</button></div>
+      <sc-for list="{{ estRows }}" as="e" hint-placeholder-count="7">
+        <div style="display:flex;flex-direction:column;gap:8px;padding:10px 0;border-top:1px solid #F0EEE8">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8A877D;width:16px">{{ e.orden }}</span>
+            <div style="display:flex;flex-direction:column"><button onClick="{{ e.onUp }}" title="Subir" style="width:26px;height:20px;border:none;background:none;cursor:pointer;opacity:{{ e.upOp }};display:grid;place-items:center;padding:0"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1">keyboard_arrow_up</span></button><button onClick="{{ e.onDown }}" title="Bajar" style="width:26px;height:20px;border:none;background:none;cursor:pointer;opacity:{{ e.downOp }};display:grid;place-items:center;padding:0"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1">keyboard_arrow_down</span></button></div>
+            <button onClick="{{ e.onPal }}" title="Cambiar color" style="width:30px;height:30px;border-radius:8px;border:1px solid #DEDBD1;background:#fff;cursor:pointer;display:grid;place-items:center;flex:none;padding:0"><span style="width:16px;height:16px;border-radius:50%;background:{{ e.color }}"></span></button>
+            <input value="{{ e.nombre }}" onChange="{{ e.onNombre }}" style="flex:1 1 160px;min-width:0;height:38px;padding:0 10px;border:1px solid #DEDBD1;border-radius:8px;background:#fff;font-size:14px;color:#17160F">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8A877D;white-space:nowrap">{{ e.uso }}</span>
+            <button onClick="{{ e.toggle.onToggle }}" title="Activo / inactivo" style="width:40px;height:24px;border-radius:12px;border:none;background:{{ e.toggle.trackBg }};position:relative;cursor:pointer;flex:none;padding:0"><span style="position:absolute;top:3px;left:{{ e.toggle.knobLeft }};width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 2px rgba(0,0,0,.2)"></span></button>
+            <sc-if value="{{ e.canDelete }}" hint-placeholder-val="{{ false }}"><button onClick="{{ e.onDelete }}" title="Eliminar" style="width:34px;height:34px;border:none;background:none;cursor:pointer;color:#B3261E;display:grid;place-items:center;padding:0"><span style="font-family:'Material Symbols Rounded';font-size:19px;line-height:1">delete</span></button></sc-if>
+          </div>
+          <sc-if value="{{ e.palOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:10px;padding:8px 0 4px 52px;flex-wrap:wrap"><sc-for list="{{ e.palette }}" as="c" hint-placeholder-count="8"><button onClick="{{ c.onPick }}" style="width:24px;height:24px;border-radius:50%;border:none;background:{{ c.c }};box-shadow:{{ c.ring }};cursor:pointer;padding:0"></button></sc-for></div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </section>
+  </sc-if>
+  <sc-if value="{{ isUsuarios }}" hint-placeholder-val="{{ false }}">
+    <section style="background:#fff;border:1px solid #E4E1D8;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:6px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px"><h2 style="margin:0;font-size:15px;font-weight:700">Usuarios</h2><button onClick="{{ onNewUser }}" style="height:38px;padding:0 13px;border:none;border-radius:9px;background:#17160F;color:#fff;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1">person_add</span>Nuevo usuario</button></div>
+      <sc-for list="{{ userRows }}" as="r" hint-placeholder-count="4">
+        <div style="display:grid;grid-template-columns:{{ userCols }};gap:10px 16px;align-items:center;padding:12px 0;border-top:1px solid #F0EEE8">
+          <div style="display:flex;align-items:center;gap:10px;min-width:0;opacity:{{ r.op }}"><span style="width:36px;height:36px;border-radius:50%;background:#EFEDE6;display:grid;place-items:center;font-size:12.5px;font-weight:700;flex:none">{{ r.ini }}</span><div style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.nombre }}</span><span style="font-size:12.5px;color:#6B6960;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.email }}</span></div></div>
+          <div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:#F2EFE6">{{ r.rol }}</span><button onClick="{{ r.toggle.onToggle }}" style="width:40px;height:24px;border-radius:12px;border:none;background:{{ r.toggle.trackBg }};position:relative;cursor:pointer;flex:none;padding:0"><span style="position:absolute;top:3px;left:{{ r.toggle.knobLeft }};width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 2px rgba(0,0,0,.2)"></span></button><span style="font-size:12.5px;color:#6B6960">{{ r.activoTxt }}</span></div>
+          <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end">
+            <sc-if value="{{ r.confirming }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#B3261E">¿Eliminar?</span><button onClick="{{ r.onConfirmDel }}" style="height:34px;padding:0 11px;border:none;border-radius:8px;background:#B3261E;color:#fff;font-size:12.5px;font-weight:600;cursor:pointer">Sí, eliminar</button><button onClick="{{ r.onCancelDel }}" style="height:34px;padding:0 11px;border:1px solid #DEDBD1;border-radius:8px;background:#fff;color:#17160F;font-size:12.5px;cursor:pointer">No</button></sc-if>
+            <button onClick="{{ r.onEdit }}" style="height:34px;padding:0 11px;border:1px solid #DEDBD1;border-radius:8px;background:#fff;color:#17160F;font-size:12.5px;font-weight:600;cursor:pointer">Editar</button>
+            <sc-if value="{{ r.canDelete }}" hint-placeholder-val="{{ false }}"><button onClick="{{ r.onDelete }}" title="Eliminar" style="width:34px;height:34px;border:none;background:none;cursor:pointer;color:#B3261E;display:grid;place-items:center;padding:0"><span style="font-family:'Material Symbols Rounded';font-size:19px;line-height:1">delete</span></button></sc-if>
+          </div>
+        </div>
+      </sc-for>
+    </section>
+  </sc-if>
+  <sc-if value="{{ showSave }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;justify-content:flex-end;align-items:center;gap:12px"><span style="font-size:13px;color:#6B6960">{{ dirtyTxt }}</span><button onClick="{{ onSave }}" style="height:42px;padding:0 18px;border:none;border-radius:9px;background:#F2C200;color:#17160F;font-size:14px;font-weight:700;cursor:pointer">Guardar cambios</button></div>
+  </sc-if>
+</div>
+</sc-if>
+  </main>
+  <sc-if value="{{ showBottomBar }}" hint-placeholder-val="{{ false }}">
+  <nav style="position:fixed;left:0;right:0;bottom:0;z-index:30;height:64px;background:#FFFFFF;border-top:1px solid #E4E1D8;display:flex;padding-bottom:env(safe-area-inset-bottom)">
+    <sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+      <button onClick="{{ n.onClick }}" style="flex:1;min-width:0;border:none;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;position:relative;color:{{ n.mfg }}">
+        <span style="position:absolute;top:0;left:22%;right:22%;height:3px;border-radius:0 0 3px 3px;background:{{ n.mbar }}"></span>
+        <span style="font-family:'Material Symbols Rounded';font-size:23px;line-height:1;color:{{ n.mic }}">{{ n.icon }}</span>
+        <span style="font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;padding:0 2px">{{ n.short }}</span>
+        <sc-if value="{{ n.hasBadge }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:7px;left:calc(50% + 6px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#D42A2A;color:#fff;font-size:10.5px;font-weight:700;display:grid;place-items:center;font-family:'IBM Plex Mono',monospace">{{ n.badge }}</span></sc-if>
+      </button>
+    </sc-for>
+  </nav>
+  </sc-if>
+</div>
+</sc-if>
+<sc-if value="{{ hasUserModal }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ um.onCancel }}" style="position:fixed;inset:0;z-index:50;background:rgba(23,22,15,.45)"></div>
+  <div style="position:fixed;z-index:51;left:50%;top:50%;transform:translate(-50%,-50%);width:min(440px,calc(100vw - 24px));background:#fff;border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 50px rgba(23,22,15,.3)">
+    <h2 style="margin:0;font-size:18px;font-weight:700">{{ um.title }}</h2>
+    <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600">Nombre</span><input value="{{ um.nombre }}" onChange="{{ um.onNombre }}" style="height:42px;padding:0 12px;border:1px solid #DEDBD1;border-radius:9px;font-size:14px;color:#17160F"></div>
+    <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600">Email</span><input type="email" value="{{ um.email }}" onChange="{{ um.onEmail }}" style="height:42px;padding:0 12px;border:1px solid #DEDBD1;border-radius:9px;font-size:14px;color:#17160F"></div>
+    <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600">Rol</span><select data-val="{{ um.rol }}" value="{{ um.rol }}" onChange="{{ um.onRol }}" style="height:42px;padding:0 10px;border:1px solid #DEDBD1;border-radius:9px;background:#fff;font-size:14px;color:#17160F"><sc-for list="{{ um.rolOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></select></div>
+    <div style="display:flex;align-items:center;gap:10px"><button onClick="{{ um.toggle.onToggle }}" style="width:40px;height:24px;border-radius:12px;border:none;background:{{ um.toggle.trackBg }};position:relative;cursor:pointer;flex:none;padding:0"><span style="position:absolute;top:3px;left:{{ um.toggle.knobLeft }};width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s"></span></button><span style="font-size:14px">{{ um.activoTxt }}</span></div>
+    <sc-if value="{{ um.hasError }}" hint-placeholder-val="{{ false }}"><div style="padding:9px 12px;border-radius:9px;background:#FBE4E1;color:#B3261E;font-size:13px">{{ um.error }}</div></sc-if>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px"><button onClick="{{ um.onCancel }}" style="height:42px;padding:0 16px;border:1px solid #DEDBD1;border-radius:9px;background:#fff;color:#17160F;font-size:14px;cursor:pointer">Cancelar</button><button onClick="{{ um.onSave }}" style="height:42px;padding:0 16px;border:none;border-radius:9px;background:#17160F;color:#fff;font-size:14px;font-weight:600;cursor:pointer">{{ um.saveLabel }}</button></div>
+  </div>
+</sc-if>
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;left:50%;bottom:{{ toastBottom }};transform:translateX(-50%);z-index:60;background:#17160F;color:#fff;padding:11px 16px;border-radius:10px;font-size:14px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(23,22,15,.25);max-width:calc(100vw - 32px)">
+    <span style="font-family:'Material Symbols Rounded';font-size:19px;line-height:1;color:#F2C200">check_circle</span>{{ toast }}
+  </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;estadoDemo&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;normal&quot;,&quot;carga&quot;,&quot;error&quot;,&quot;vacio&quot;],&quot;default&quot;:&quot;normal&quot;,&quot;tsType&quot;:&quot;'normal'|'carga'|'error'|'vacio'&quot;,&quot;section&quot;:&quot;Demo&quot;},&quot;rolInicial&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;ninguno&quot;,&quot;admin&quot;,&quot;supervisor&quot;,&quot;vendedor&quot;],&quot;default&quot;:&quot;ninguno&quot;,&quot;tsType&quot;:&quot;'ninguno'|'admin'|'supervisor'|'vendedor'&quot;,&quot;section&quot;:&quot;Demo&quot;}}">
+class Component extends DCLogic {
+  state = { db: null, loadError: false, user: null, booting: false, loginEmail: 'supervisor@suplenort.com', loginPass: 'demo1234', loginError: '', screen: 'dashboard', w: window.innerWidth, range: 14, canal: 'todos', q: '', fEstado: 'todos', fAlerta: 'todos', fEsperando: false, convView: 'lista', selConv: null, detailTab: 'chat', analizando: false, noteDraft: '', aTipo: 'todos', aNivel: 'todos', aEstado: 'abiertas', resolving: null, resolveComment: '', cfgTab: 'whatsapp', reveal: {}, testing: {}, testResult: {}, userModal: null, confirmDel: null, palOpen: null, toast: '', retried: false, retrying: false, dirty: false };
+  tz = 'America/Argentina/Buenos_Aires';
+  CRIT = [['respuesta', 'Tiempo de respuesta'], ['atencion', 'Atención y tono'], ['tecnica', 'Técnica de venta'], ['seguimiento', 'Seguimiento']];
+  PALETTE = ['#6B7280', '#2F6FDB', '#7A4FD6', '#D98A00', '#1E8E4E', '#C62828', '#0F8A8A', '#B5446E'];
+  MODELOS = { Anthropic: ['claude-sonnet-4-5', 'claude-opus-4-1', 'claude-haiku-4-5'], OpenAI: ['gpt-4.1', 'gpt-4.1-mini'], Google: ['gemini-2.5-pro', 'gemini-2.5-flash'] };
+  ROLES = { admin: 'Administrador', supervisor: 'Supervisor', vendedor: 'Vendedor' };
+
+  componentDidMount() {
+    this._rs = () => this.setState({ w: window.innerWidth });
+    window.addEventListener('resize', this._rs);
+    let n = 0;
+    const wait = () => {
+      if (window.NORT_DATA) {
+        this._lt = setTimeout(() => {
+          const db = JSON.parse(JSON.stringify(window.NORT_DATA));
+          const r = this.props.rolInicial;
+          const user = r && r !== 'ninguno' ? db.usuarios.find(u => u.rol === r && u.activo) : null;
+          this.setState({ db, user: user || null, screen: user ? this.home(user) : 'dashboard' });
+        }, 350);
+      } else if (++n > 120) this.setState({ loadError: true });
+      else this._wt = setTimeout(wait, 50);
+    };
+    wait();
+  }
+  syncSelects() { document.querySelectorAll('select[data-val]').forEach(s => { if (s.dataset.val && s.value !== s.dataset.val) s.value = s.dataset.val; }); }
+  componentDidUpdate() { requestAnimationFrame(() => this.syncSelects()); }
+  componentWillUnmount() { window.removeEventListener('resize', this._rs); [this._lt, this._wt, this._tt, this._bt].forEach(clearTimeout); }
+  home(u) { return u.rol === 'vendedor' ? 'conversaciones' : 'dashboard'; }
+  doLogin(email) {
+    const db = this.state.db; if (!db) return;
+    const e = (email || this.state.loginEmail).trim().toLowerCase();
+    const u = db.usuarios.find(x => x.email.toLowerCase() === e);
+    if (!u || (!email && !this.state.loginPass)) return this.setState({ loginError: 'Email o contraseña incorrectos.' });
+    if (!u.activo) return this.setState({ loginError: 'Este usuario está inactivo. Contactá al administrador.' });
+    this.setState({ user: u, loginError: '', screen: this.home(u), selConv: null, booting: true, loginEmail: u.email });
+    this._bt = setTimeout(() => this.setState({ booting: false }), 700);
+  }
+  go(k) { this.setState({ screen: k, selConv: null, resolving: null }); try { window.scrollTo(0, 0); } catch (e) {} }
+  toastMsg(t) { clearTimeout(this._tt); this.setState({ toast: t }); this._tt = setTimeout(() => this.setState({ toast: '' }), 2400); }
+  copy(t) { try { navigator.clipboard.writeText(t); } catch (e) {} this.toastMsg('Copiado al portapapeles'); }
+  ahora() { return new Date(this.state.db.ahora).getTime(); }
+  nowIso() { this._seq = (this._seq || 0) + 1; return new Date(this.ahora() + this._seq * 1000).toISOString(); }
+  minsAgo(iso) { return Math.max(0, Math.round((this.ahora() - new Date(iso).getTime()) / 60000)); }
+  dur(m) { if (m < 60) return m + ' min'; if (m < 1440) { const h = Math.floor(m / 60), r = m % 60; return h + ' h' + (r ? ' ' + r + ' min' : ''); } const d = Math.floor(m / 1440); return d + (d === 1 ? ' día' : ' días'); }
+  hora(iso) { return new Date(iso).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: this.tz }); }
+  dk(x) { return new Date(x).toLocaleDateString('en-CA', { timeZone: this.tz }); }
+  dshort(x) { return new Date(x).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', timeZone: this.tz }); }
+  dayWord(iso) { const k = this.dk(iso); if (k === this.dk(this.ahora())) return 'Hoy'; if (k === this.dk(this.ahora() - 864e5)) return 'Ayer'; return null; }
+  rel(iso) { const w = this.dayWord(iso); return w === 'Hoy' ? this.hora(iso) : (w || this.dshort(iso)); }
+  fecha(iso) { return (this.dayWord(iso) || this.dshort(iso)) + ' ' + this.hora(iso); }
+  dayLabel(iso) { const w = this.dayWord(iso); if (w) return w; const s = new Date(iso).toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: this.tz }); return s.charAt(0).toUpperCase() + s.slice(1); }
+  initials(n) { return (n || '?').replace('@', '').split(/[\s._]+/).filter(Boolean).slice(0, 2).map(x => x[0].toUpperCase()).join(''); }
+  chan(id) { return id === 'instagram' ? { label: 'Instagram', dot: '#C13584', bg: '#F7E6F0', fg: '#8A1F5C' } : { label: 'WhatsApp', dot: '#128C7E', bg: '#E1F2EF', fg: '#0B5F55' }; }
+  lvl(n) { return n === 'critico' ? { label: 'Crítico', fg: '#B3261E', bg: '#FBE4E1', dot: '#D93025' } : n === 'advertencia' ? { label: 'Advertencia', fg: '#8A5200', bg: '#FCEFD2', dot: '#E09B00' } : { label: 'En tiempo', fg: '#5E4B00', bg: '#FFF4C2', dot: '#C9A100' }; }
+  sc(p) { return p == null ? '#A19E92' : p >= 8 ? '#1E8E4E' : p >= 6 ? '#C98500' : '#C62828'; }
+  fmt1(x) { return x == null || isNaN(x) ? '—' : (Math.round(x * 10) / 10).toFixed(1).replace('.', ','); }
+  pill(label, on, fn) { return { label, onClick: fn, bg: on ? '#FFFFFF' : 'transparent', fg: on ? '#17160F' : '#5E5B52', sh: on ? '0 1px 2px rgba(23,22,15,.14)' : 'none', fw: on ? '600' : '500' }; }
+  tg(on, fn) { return { onToggle: fn, trackBg: on ? '#17160F' : '#D3D0C6', knobLeft: on ? '19px' : '3px' }; }
+  estadosOrd() { return [...this.state.db.estadosVenta].sort((a, b) => a.orden - b.orden); }
+  I() {
+    const db = this.state.db; if (this._ix && this._ixDb === db) return this._ix;
+    const msgs = {}; db.mensajes.forEach(m => { (msgs[m.conversacionId] = msgs[m.conversacionId] || []).push(m); });
+    Object.keys(msgs).forEach(k => msgs[k].sort((a, b) => a.enviadoAt < b.enviadoAt ? -1 : 1));
+    const an = {}; db.analisis.forEach(a => { if (!an[a.conversacionId] || an[a.conversacionId].creadoAt < a.creadoAt) an[a.conversacionId] = a; });
+    const cli = {}, est = {}, usr = {}; db.clientes.forEach(c => cli[c.id] = c); db.estadosVenta.forEach(e => est[e.id] = e); db.usuarios.forEach(u => usr[u.id] = u);
+    this._ixDb = db; this._ix = { msgs, an, cli, est, usr }; return this._ix;
+  }
+  score(an) { const w = this.state.db.configuracion.ia.pesos; let t = 0, sw = 0; this.CRIT.forEach(([k]) => { const p = an.puntajes[k] && an.puntajes[k].puntaje; if (p != null) { t += p * w[k]; sw += w[k]; } }); return sw ? t / sw : null; }
+  cv(c, I) {
+    const cfg = this.state.db.configuracion.alertas;
+    const msgs = I.msgs[c.id] || []; const last = msgs[msgs.length - 1];
+    const cli = I.cli[c.clienteId] || { nombre: '—', usuario: '' };
+    const est = I.est[c.estadoId] || { nombre: c.estadoId, color: '#8A877D' };
+    const esperando = !!last && last.autor === 'cliente';
+    const esperaMin = esperando ? this.minsAgo(last.enviadoAt) : 0;
+    const nivel = !esperando ? null : esperaMin >= cfg.criticoMin ? 'critico' : esperaMin >= cfg.advertenciaMin ? 'advertencia' : 'normal';
+    const alertas = this.state.db.alertas.filter(a => a.conversacionId === c.id && a.estado === 'abierta');
+    const an = I.an[c.id];
+    return { c, id: c.id, cli, est, msgs, last, esperando, esperaMin, nivel, alertas, an, score: an ? this.score(an) : null };
+  }
+  convsAll() { const s = this.state; if (this.props.estadoDemo === 'vacio') return []; const I = this.I(); let l = s.db.conversaciones; if (s.user.rol === 'vendedor') l = l.filter(c => c.vendedorId === s.user.id); return l.map(c => this.cv(c, I)); }
+  byCanal(v) { return this.state.canal === 'todos' || v.c.canalId === this.state.canal; }
+  upd(fn) { this.setState(s => { const db = { ...s.db }; fn(db); return { db }; }); }
+  setCfg(sec, key, val) { this.setState(s => ({ dirty: true, db: { ...s.db, configuracion: { ...s.db.configuracion, [sec]: { ...s.db.configuracion[sec], [key]: val } } } })); }
+  openConv(id) { this.setState({ screen: 'conversaciones', selConv: id, detailTab: 'chat', noteDraft: '', convView: 'lista', resolving: null }); }
+  setEstado(convId, estadoId) {
+    const u = this.state.user;
+    this.upd(db => { db.conversaciones = db.conversaciones.map(c => c.id === convId ? { ...c, estadoId } : c); db.historialEstados = [...db.historialEstados, { id: 'h' + Date.now(), conversacionId: convId, estadoId, origen: 'manual', cambiadoPor: u.id, creadoAt: this.nowIso() }]; });
+    this.toastMsg('Estado corregido manualmente');
+  }
+  analizar(x) {
+    if (this.state.analizando) return;
+    this.setState({ analizando: true });
+    setTimeout(() => {
+      const u = this.state.user;
+      this.upd(db => {
+        const prev = this.I().an[x.id];
+        const first = x.msgs[0] ? x.msgs[0].texto : '';
+        const base = prev ? { ...prev } : {
+          resumen: 'Consulta inicial: "' + first + '". Todavía no hay respuesta del vendedor.', intencion: 'Consulta inicial', productos: [], objeciones: [],
+          proximoPaso: 'Responder dentro de los próximos minutos con precio, stock y opciones de envío.',
+          puntajes: { respuesta: { puntaje: x.esperaMin >= 15 ? 4 : 7, comentario: 'Cliente esperando hace ' + this.dur(x.esperaMin) + '.' }, atencion: { puntaje: null, comentario: 'Sin respuestas del vendedor para evaluar.' }, tecnica: { puntaje: null, comentario: 'Sin respuestas del vendedor para evaluar.' }, seguimiento: { puntaje: null, comentario: 'Sin respuestas del vendedor para evaluar.' } },
+        };
+        db.analisis = [...db.analisis, { ...base, id: 'an' + Date.now(), conversacionId: x.id, creadoAt: this.nowIso(), motivo: 'manual', solicitadoPor: u.id }];
+      });
+      this.setState({ analizando: false });
+      this.toastMsg('Análisis actualizado');
+    }, 1600);
+  }
+  addNote(convId) {
+    const t = this.state.noteDraft.trim(); if (!t) return;
+    const u = this.state.user;
+    this.upd(db => { db.notas = [...db.notas, { id: 'n' + Date.now(), conversacionId: convId, autorId: u.id, texto: t, creadoAt: this.nowIso() }]; });
+    this.setState({ noteDraft: '' }); this.toastMsg('Nota agregada');
+  }
+  resolve(id) {
+    const u = this.state.user, c = this.state.resolveComment.trim();
+    this.upd(db => { db.alertas = db.alertas.map(a => a.id === id ? { ...a, estado: 'atendida', atendidaPor: u.id, atendidaAt: this.nowIso(), comentario: c } : a); });
+    this.setState({ resolving: null, resolveComment: '' }); this.toastMsg('Alerta marcada como atendida');
+  }
+  series() {
+    const s = this.state, db = s.db; if (this.props.estadoDemo === 'vacio') return [];
+    const days = [...new Set(db.metricasDiarias.map(m => m.fecha))].sort().slice(-s.range);
+    return days.map(f => {
+      const ms = db.metricasDiarias.filter(m => m.fecha === f && (s.canal === 'todos' || m.canalId === s.canal));
+      const conv = ms.reduce((a, m) => a + m.conversaciones, 0), d = conv || 1;
+      return { fecha: f, conv, ganadas: ms.reduce((a, m) => a + m.ganadas, 0), puntaje: ms.reduce((a, m) => a + m.puntaje * m.conversaciones, 0) / d, tiempo: ms.reduce((a, m) => a + m.tiempoRespuestaMin * m.conversaciones, 0) / d };
+    });
+  }
+  chart(vals, min, max, ser) {
+    const n = vals.length; const f = d => d.slice(8, 10) + '/' + d.slice(5, 7);
+    const x = n ? [f(ser[0].fecha), f(ser[Math.floor((n - 1) / 2)].fecha), f(ser[n - 1].fecha)] : ['', '', ''];
+    if (n < 2) return { has: false, none: true, pts: '', area: '', x0: '', x1: '', x2: '' };
+    const W = 600, H = 160;
+    const pts = vals.map((v, i) => (i / (n - 1) * W).toFixed(1) + ',' + (H - 8 - ((v - min) / ((max - min) || 1)) * (H - 16)).toFixed(1)).join(' ');
+    return { has: true, none: false, pts, area: '0,' + H + ' ' + pts + ' ' + W + ',' + H, x0: x[0], x1: x[1], x2: x[2] };
+  }
+  alertsAll() {
+    if (this.props.estadoDemo === 'vacio') return [];
+    const I = this.I(), cmap = {}; this.state.db.conversaciones.forEach(c => cmap[c.id] = this.cv(c, I));
+    return this.state.db.alertas.map(a => ({ a, v: cmap[a.conversacionId] }));
+  }
+  urg(x, y) { const r = t => (t.a.estado === 'abierta' ? 0 : 10) + (t.a.nivel === 'critico' ? 0 : 2) + (t.a.tipo === 'intervencion' ? 0 : 1); return r(x) - r(y) || (x.a.creadaAt < y.a.creadaAt ? -1 : 1); }
+  aVM(t) {
+    const { a, v } = t; const s = this.state, cfg = s.db.configuracion.alertas, I = this.I();
+    const esp = a.tipo === 'espera', lv = this.lvl(a.nivel), ch = this.chan(v ? v.c.canalId : 'whatsapp'), isR = s.resolving === a.id, ab = a.estado === 'abierta';
+    let motivo = a.motivo, frag = a.fragmento || '';
+    if (esp) {
+      motivo = v && v.esperando ? 'El último mensaje del cliente lleva ' + this.dur(v.esperaMin) + ' sin respuesta (umbral ' + (a.nivel === 'critico' ? 'crítico: ' + cfg.criticoMin : 'de advertencia: ' + cfg.advertenciaMin) + ' min).' : 'El cliente ya fue respondido.';
+      frag = v && v.last && v.last.autor === 'cliente' ? v.last.texto : '';
+    }
+    const at = I.usr[a.atendidaPor];
+    return {
+      id: a.id, nivelLabel: lv.label, lvFg: lv.fg, lvBg: lv.bg, lvDot: lv.dot,
+      tipoLabel: esp ? 'Cliente esperando respuesta' : 'Intervención de supervisor', tipoIcon: esp ? 'schedule' : 'support_agent',
+      titulo: esp ? 'Esperando hace ' + (v ? this.dur(v.esperaMin) : '—') : a.titulo,
+      cliente: v ? v.cli.nombre : '—', usuario: v ? v.cli.usuario : '', chLabel: ch.label, chDot: ch.dot, chBg: ch.bg, chFg: ch.fg,
+      hora: this.fecha(a.creadaAt), ago: 'hace ' + this.dur(this.minsAgo(a.creadaAt)),
+      motivo, frag, hasFrag: !!frag, abierta: ab, atendida: !ab,
+      atendidaTxt: !ab ? 'Atendida por ' + (at ? at.nombre : '—') + ' · ' + this.fecha(a.atendidaAt) : '',
+      comentario: a.comentario || '', hasComentario: !ab && !!a.comentario,
+      onOpen: () => this.openConv(a.conversacionId),
+      canResolve: ab && !isR && s.user.rol !== 'vendedor', isResolving: isR,
+      onResolve: () => this.setState({ resolving: a.id, resolveComment: '' }),
+      resolveComment: s.resolveComment, onResolveComment: e => this.setState({ resolveComment: e.target.value }),
+      onConfirm: () => this.resolve(a.id), onCancel: () => this.setState({ resolving: null }),
+    };
+  }
+  itemVM(x, isVend) {
+    const ch = this.chan(x.c.canalId), lv = this.lvl(x.nivel || 'normal'), sel = this.state.selConv === x.id;
+    const crit = x.alertas.some(a => a.nivel === 'critico');
+    return {
+      id: x.id, estadoId: x.c.estadoId, nombre: x.cli.nombre, sub: x.cli.empresa || x.cli.usuario, ini: this.initials(x.cli.nombre),
+      chLabel: ch.label, chDot: ch.dot, chBg: ch.bg, chFg: ch.fg,
+      preview: x.last ? (x.last.autor === 'vendedor' ? 'Vendedor: ' : '') + x.last.texto : '', hora: x.last ? this.rel(x.last.enviadoAt) : '',
+      estNombre: x.est.nombre, estColor: x.est.color, estFg: 'color-mix(in oklch, ' + x.est.color + ' 70%, black)', estBg: 'color-mix(in oklch, ' + x.est.color + ' 12%, white)',
+      esperando: x.esperando, espLabel: 'Esperando ' + this.dur(x.esperaMin), espFg: lv.fg, espBg: lv.bg,
+      hasAlert: !isVend && x.alertas.length > 0, alertN: String(x.alertas.length), alertBg: crit ? '#D42A2A' : '#E09B00',
+      rowBg: sel ? '#FFF7D6' : '#FFFFFF', bar: sel ? '#F2C200' : 'transparent', onClick: () => this.openConv(x.id),
+    };
+  }
+  dashVals() {
+    const s = this.state; const convs = this.convsAll().filter(x => this.byCanal(x)); const ser = this.series();
+    const tot = ser.reduce((a, d) => a + d.conv, 0), gan = ser.reduce((a, d) => a + d.ganadas, 0);
+    const avg = k => tot ? ser.reduce((a, d) => a + d[k] * d.conv, 0) / tot : null;
+    const activas = convs.filter(x => !['ganado', 'perdido'].includes(x.c.estadoId)).length;
+    const esp = convs.filter(x => x.esperando), espC = esp.filter(x => x.nivel === 'critico').length, espA = esp.filter(x => x.nivel === 'advertencia').length;
+    const al = this.alertsAll().filter(t => t.a.estado === 'abierta' && t.v && this.byCanal(t.v)).sort((a, b) => this.urg(a, b));
+    const alC = al.filter(t => t.a.nivel === 'critico').length;
+    const kpis = [
+      { label: 'Conversaciones activas', value: String(activas), sub: convs.length + ' en total', icon: 'forum', onClick: () => this.go('conversaciones') },
+      { label: 'Esperando respuesta', value: String(esp.length), sub: esp.length ? espC + ' críticas · ' + espA + ' en advertencia' : 'Nadie esperando', icon: 'hourglass_top', hasDot: espC > 0, dot: '#D93025', onClick: () => { this.go('conversaciones'); this.setState({ fEsperando: true }); } },
+      { label: 'Alertas abiertas', value: String(al.length), sub: alC ? alC + ' críticas' : 'Sin alertas críticas', icon: 'notifications', hasDot: alC > 0, dot: '#D93025', onClick: () => this.go('alertas') },
+      { label: '1ª respuesta promedio', value: tot ? String(Math.round(avg('tiempo'))) : '—', unit: 'min', sub: 'Últimos ' + s.range + ' días', icon: 'timer' },
+      { label: 'Tasa de conversión', value: tot ? String(Math.round(gan / tot * 100)) : '—', unit: '%', sub: gan + ' ganadas de ' + tot, icon: 'trending_up' },
+      { label: 'Puntaje del vendedor', value: this.fmt1(avg('puntaje')), unit: '/10', sub: 'Promedio del período', icon: 'star' },
+    ].map(k => ({ unit: '', hasDot: false, dot: 'transparent', ...k, cursor: k.onClick ? 'pointer' : 'default', onClick: k.onClick || null, hasArrow: !!k.onClick }));
+    const ests = this.estadosOrd().filter(e => e.activo); const counts = ests.map(e => convs.filter(x => x.c.estadoId === e.id).length); const mx = Math.max(1, ...counts);
+    const funnel = ests.map((e, i) => ({ nombre: e.nombre, color: e.color, count: String(counts[i]), w: (counts[i] / mx * 100) + '%' }));
+    const ps = ser.map(d => d.puntaje), ts = ser.map(d => d.tiempo), tmax = Math.max(10, Math.ceil(Math.max(0, ...ts) / 10) * 10);
+    return {
+      kpis, funnel, hasFunnel: convs.length > 0, noFunnel: convs.length === 0,
+      dashAlerts: al.slice(0, 6).map(t => this.aVM(t)), hasDashAlerts: al.length > 0, noDashAlerts: al.length === 0,
+      dashAlertsMore: al.length > 6 ? 'Ver las ' + al.length + ' alertas' : 'Ver bandeja', onAllAlerts: () => this.go('alertas'),
+      chScore: { ...this.chart(ps, 4, 10, ser), y0: '10', y1: '7', y2: '4', last: ps.length ? this.fmt1(ps[ps.length - 1]) : '—' },
+      chTime: { ...this.chart(ts, 0, tmax, ser), y0: String(tmax), y1: String(tmax / 2), y2: '0', last: ts.length ? Math.round(ts[ts.length - 1]) + ' min' : '—' },
+    };
+  }
+  detailVM(x, isVend, split) {
+    const s = this.state, db = s.db, I = this.I(), ch = this.chan(x.c.canalId), cfg = db.configuracion.ia;
+    const vend = (I.usr[x.c.vendedorId] || { nombre: 'Vendedor' }).nombre.split(' ')[0];
+    const thread = []; let lastDay = null;
+    x.msgs.forEach(m => {
+      const k = this.dk(m.enviadoAt);
+      if (k !== lastDay) { thread.push({ isDay: true, isMsg: false, label: this.dayLabel(m.enviadoAt) }); lastDay = k; }
+      const cl = m.autor === 'cliente';
+      thread.push({ isDay: false, isMsg: true, texto: m.texto, align: cl ? 'flex-start' : 'flex-end', bg: cl ? '#FFFFFF' : '#FFF0B3', bd: cl ? '#E4E1D8' : '#EBD587', radius: cl ? '4px 14px 14px 14px' : '14px 4px 14px 14px', meta: (cl ? x.cli.nombre.split(' ')[0] + ' · cliente' : vend + ' · vendedor') + ' · ' + this.hora(m.enviadoAt) });
+    });
+    const hist = db.historialEstados.filter(h => h.conversacionId === x.id).sort((a, b) => a.creadoAt < b.creadoAt ? 1 : -1).map(h => {
+      const e = I.est[h.estadoId] || { nombre: h.estadoId, color: '#8A877D' };
+      return { nombre: e.nombre, color: e.color, quien: h.origen === 'manual' ? 'Corregido por ' + ((I.usr[h.cambiadoPor] || {}).nombre || 'usuario') : 'Asignado por IA', fecha: this.fecha(h.creadoAt), icon: h.origen === 'manual' ? 'person' : 'auto_awesome' };
+    });
+    const an = x.an;
+    const motivoLbl = an ? ({ tiempo: 'Por tiempo · cada ' + cfg.cadaMinutos + ' min', mensajes: 'Por volumen · ' + cfg.cadaMensajes + ' mensajes nuevos', manual: 'Manual · ' + ((I.usr[an.solicitadoPor] || {}).nombre || '') }[an.motivo]) : '';
+    const anVM = an ? {
+      fecha: this.fecha(an.creadoAt), motivo: motivoLbl, resumen: an.resumen, intencion: an.intencion,
+      productos: an.productos.map(p => ({ p })), hasProductos: an.productos.length > 0, noProductos: !an.productos.length,
+      objeciones: an.objeciones.map(o => ({ o })), hasObjeciones: an.objeciones.length > 0, noObjeciones: !an.objeciones.length,
+      proximo: an.proximoPaso, score: this.fmt1(x.score), scoreColor: this.sc(x.score),
+      crit: this.CRIT.map(([k, n]) => { const p = an.puntajes[k] || {}; return { nombre: n, puntaje: p.puntaje == null ? '—' : String(p.puntaje), comentario: p.comentario || '', w: p.puntaje == null ? '0%' : (p.puntaje * 10) + '%', color: this.sc(p.puntaje), peso: 'peso ' + cfg.pesos[k] + '%' }; }),
+    } : {};
+    const als = db.alertas.filter(a => a.conversacionId === x.id).map(a => ({ a, v: x })).sort((a, b) => this.urg(a, b)).map(t => this.aVM(t));
+    const notas = db.notas.filter(n => n.conversacionId === x.id).sort((a, b) => a.creadoAt < b.creadoAt ? 1 : -1).map(n => ({ autor: (I.usr[n.autorId] || {}).nombre || '—', fecha: this.fecha(n.creadoAt), texto: n.texto }));
+    const openN = als.filter(a => a.abierta).length;
+    const lv = this.lvl(x.nivel || 'normal');
+    return {
+      nombre: x.cli.nombre, sub: [x.cli.usuario, x.cli.empresa].filter(Boolean).join(' · '), ini: this.initials(x.cli.nombre),
+      chLabel: ch.label, chDot: ch.dot, chBg: ch.bg, chFg: ch.fg,
+      estNombre: x.est.nombre, estColor: x.est.color, estFg: 'color-mix(in oklch, ' + x.est.color + ' 70%, black)', estBg: 'color-mix(in oklch, ' + x.est.color + ' 12%, white)',
+      esperando: x.esperando, espLabel: 'Esperando ' + this.dur(x.esperaMin), espFg: lv.fg, espBg: lv.bg,
+      thread, readOnly: 'Solo lectura · el vendedor responde desde la app de ' + ch.label,
+      canEditEstado: !isVend, noEditEstado: isVend, estadoId: x.c.estadoId,
+      estadoOpts: this.estadosOrd().filter(e => e.activo || e.id === x.c.estadoId).map(e => ({ value: e.id, label: e.nombre })),
+      onEstado: e => this.setEstado(x.id, e.target.value), hist,
+      hasAn: !!an, noAn: !an, an: anVM, analizando: s.analizando, notAnalizando: !s.analizando,
+      analizarLabel: s.analizando ? 'Analizando…' : 'Analizar ahora', onAnalizar: () => this.analizar(x),
+      noAnText: 'Se analiza cada ' + cfg.cadaMinutos + ' min o cada ' + cfg.cadaMensajes + ' mensajes nuevos, lo que ocurra primero. Podés forzarlo ahora.',
+      showAlerts: !isVend, alerts: als, hasAlerts: als.length > 0, noAlerts: als.length === 0,
+      showNotes: !isVend, notas, hasNotas: notas.length > 0, noNotas: notas.length === 0,
+      noteDraft: s.noteDraft, onNote: e => this.setState({ noteDraft: e.target.value }), onAddNote: () => this.addNote(x.id), noteBtnOp: s.noteDraft.trim() ? '1' : '.45',
+      onBack: () => this.setState({ selConv: null }),
+      tabs: [this.pill('Chat', s.detailTab === 'chat', () => this.setState({ detailTab: 'chat' })), this.pill('Análisis y gestión' + (openN && !isVend ? ' · ' + openN : ''), s.detailTab === 'info', () => this.setState({ detailTab: 'info' }))],
+    };
+  }
+  convVals() {
+    const s = this.state, w = s.w, isMobile = w < 760, isVend = s.user.rol === 'vendedor';
+    const all = this.convsAll(), q = s.q.trim().toLowerCase();
+    let list = all.filter(x => this.byCanal(x));
+    if (s.fEstado !== 'todos') list = list.filter(x => x.c.estadoId === s.fEstado);
+    if (!isVend && s.fAlerta === 'con') list = list.filter(x => x.alertas.length);
+    if (!isVend && s.fAlerta === 'sin') list = list.filter(x => !x.alertas.length);
+    if (s.fEsperando) list = list.filter(x => x.esperando);
+    if (q) list = list.filter(x => (x.cli.nombre + ' ' + x.cli.usuario + ' ' + (x.cli.empresa || '')).toLowerCase().includes(q) || x.msgs.some(m => m.texto.toLowerCase().includes(q)));
+    list.sort((a, b) => ((b.last ? b.last.enviadoAt : '') > (a.last ? a.last.enviadoAt : '') ? 1 : -1));
+    const filtersOn = s.fEstado !== 'todos' || s.fAlerta !== 'todos' || s.fEsperando || !!q || s.canal !== 'todos';
+    const sel = s.selConv ? all.find(x => x.id === s.selConv) : null;
+    const kanban = s.convView === 'kanban' && !isMobile, wide = w >= 900, split = w >= 1400;
+    const items = list.map(x => this.itemVM(x, isVend));
+    const ests = this.estadosOrd().filter(e => e.activo);
+    const espCount = all.filter(x => x.esperando && this.byCanal(x)).length;
+    return {
+      q: s.q, onQ: e => this.setState({ q: e.target.value }),
+      estadoOpts: [{ value: 'todos', label: 'Todos los estados' }, ...ests.map(e => ({ value: e.id, label: e.nombre }))], fEstado: s.fEstado, onFEstado: e => this.setState({ fEstado: e.target.value }),
+      showAlertaFilter: !isVend, alertaOpts: [{ value: 'todos', label: 'Con y sin alerta' }, { value: 'con', label: 'Con alerta' }, { value: 'sin', label: 'Sin alerta' }], fAlerta: s.fAlerta, onFAlerta: e => this.setState({ fAlerta: e.target.value }),
+      espPill: { label: 'Esperando respuesta', count: String(espCount), onClick: () => this.setState(st => ({ fEsperando: !st.fEsperando })), bg: s.fEsperando ? '#17160F' : '#FFFFFF', fg: s.fEsperando ? '#FFFFFF' : '#17160F', bd: s.fEsperando ? '#17160F' : '#DEDBD1', cbg: s.fEsperando ? '#F2C200' : '#F2EFE6' },
+      viewOpts: [this.pill('Lista', !kanban, () => this.setState({ convView: 'lista' })), this.pill('Kanban', kanban, () => this.setState({ convView: 'kanban', selConv: null }))],
+      showViewToggle: !isMobile, convTitle: isVend ? 'Mis conversaciones' : 'Conversaciones',
+      resultCount: list.length + (list.length === 1 ? ' conversación' : ' conversaciones'),
+      onClearFilters: () => this.setState({ fEstado: 'todos', fAlerta: 'todos', fEsperando: false, q: '', canal: 'todos' }),
+      convH: isMobile ? 'calc(100dvh - 120px)' : '100dvh', convPadX: isMobile ? '14px' : '28px',
+      showConvHeader: !(isMobile && sel), isKanban: kanban, isLista: !kanban,
+      items, hasItems: items.length > 0, noItems: items.length === 0,
+      emptyTitle: all.length === 0 ? 'Todavía no hay conversaciones' : 'Sin resultados',
+      emptyText: all.length === 0 ? 'Cuando lleguen mensajes por WhatsApp o Instagram los vas a ver acá.' : 'Ninguna conversación coincide con los filtros aplicados.',
+      showClear: all.length > 0 && filtersOn,
+      showList: !kanban && (!sel || wide), listW: wide ? (w >= 1280 ? '380px' : '340px') : '100%',
+      showDetailCol: !kanban && (wide || !!sel), hasSel: !!sel, noSel: !sel,
+      split, showTabs: !split, showChat: split || s.detailTab === 'chat', showPanel: split || s.detailTab === 'info',
+      panelW: split ? '390px' : '100%', panelBorder: split ? '1px solid #E4E1D8' : 'none', showBack: !wide,
+      d: sel ? this.detailVM(sel, isVend, split) : { tabs: [], thread: [], hist: [], alerts: [], notas: [], estadoOpts: [], an: {} },
+      kCols: ests.map(e => { const cards = items.filter(i => i.estadoId === e.id).map(i => ({ ...i, onClick: () => this.setState({ convView: 'lista', selConv: i.id, detailTab: 'chat' }) })); return { nombre: e.nombre, color: e.color, count: String(cards.length), cards, empty: cards.length === 0 }; }),
+    };
+  }
+  perfVals() {
+    const s = this.state, db = s.db, I = this.I(), isVend = s.user.rol === 'vendedor';
+    const all = this.convsAll().filter(x => x.an && this.minsAgo(x.an.creadoAt) <= s.range * 1440);
+    const sel = all.filter(x => this.byCanal(x));
+    const avgC = (arr, k) => { const v = arr.map(x => x.an.puntajes[k] && x.an.puntajes[k].puntaje).filter(p => p != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
+    const avgG = arr => { const v = arr.map(x => x.score).filter(p => p != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
+    const g = avgG(sel);
+    const crit = this.CRIT.map(([k, n]) => { const a = avgC(sel, k); return { nombre: n, value: this.fmt1(a), w: a == null ? '0%' : a * 10 + '%', color: this.sc(a), peso: 'Peso ' + db.configuracion.ia.pesos[k] + '%' }; });
+    const byCh = ['whatsapp', 'instagram'].map(id => { const arr = all.filter(x => x.c.canalId === id), ch = this.chan(id), gg = avgG(arr); return { label: ch.label, dot: ch.dot, n: arr.length + ' analizadas', general: this.fmt1(gg), gColor: this.sc(gg), crit: this.CRIT.map(([k, n]) => { const a = avgC(arr, k); return { nombre: n, value: this.fmt1(a), w: a == null ? '0%' : a * 10 + '%', color: this.sc(a) }; }) }; });
+    const sorted = [...sel].filter(x => x.score != null).sort((a, b) => b.score - a.score);
+    const card = x => { const ch = this.chan(x.c.canalId); return { nombre: x.cli.nombre, chLabel: ch.label, chDot: ch.dot, score: this.fmt1(x.score), color: this.sc(x.score), resumen: x.an.resumen, estado: x.est.nombre, onClick: () => this.openConv(x.id) }; };
+    const ser = this.series(), ps = ser.map(d => d.puntaje);
+    const r = db.resumenDesempeno, vend = I.usr[r.vendedorId] || { nombre: '' };
+    return {
+      perfTitle: isVend ? 'Mi desempeño' : 'Desempeño del vendedor', perfWho: vend.nombre,
+      general: this.fmt1(g), gColor: this.sc(g), gLabel: g == null ? 'Sin datos' : g >= 8 ? 'Muy bueno' : g >= 6 ? 'Aceptable' : 'Necesita mejorar',
+      nAnalizadas: sel.length + ' conversaciones analizadas', perfCrit: crit, byCh,
+      best: sorted.slice(0, 3).map(card), worst: sorted.slice(-3).reverse().map(card),
+      hasPerf: sel.length > 0, noPerf: sel.length === 0,
+      fortalezas: r.fortalezas.map(t => ({ t })), mejoras: r.mejoras.map(t => ({ t })), resumenFecha: 'Redactado por IA · ' + this.fecha(r.generadoAt),
+      pChart: { ...this.chart(ps, 4, 10, ser), y0: '10', y1: '7', y2: '4', last: ps.length ? this.fmt1(ps[ps.length - 1]) : '—' },
+    };
+  }
+  alertVals() {
+    const s = this.state;
+    let l = this.alertsAll().filter(t => t.v && this.byCanal(t.v));
+    const nAb = l.filter(t => t.a.estado === 'abierta').length, nAt = l.length - nAb;
+    if (s.aTipo !== 'todos') l = l.filter(t => t.a.tipo === s.aTipo);
+    if (s.aNivel !== 'todos') l = l.filter(t => t.a.nivel === s.aNivel);
+    if (s.aEstado === 'abiertas') l = l.filter(t => t.a.estado === 'abierta'); else if (s.aEstado === 'atendidas') l = l.filter(t => t.a.estado !== 'abierta');
+    l.sort((a, b) => this.urg(a, b));
+    const P = (k, v, lab) => this.pill(lab, s[k] === v, () => this.setState({ [k]: v, resolving: null }));
+    return {
+      aEstadoOpts: [P('aEstado', 'abiertas', 'Abiertas · ' + nAb), P('aEstado', 'atendidas', 'Atendidas · ' + nAt), P('aEstado', 'todas', 'Todas')],
+      aTipoOpts: [P('aTipo', 'todos', 'Todos los tipos'), P('aTipo', 'intervencion', 'Intervención'), P('aTipo', 'espera', 'Espera')],
+      aNivelOpts: [P('aNivel', 'todos', 'Todos'), P('aNivel', 'critico', 'Crítico'), P('aNivel', 'advertencia', 'Advertencia')],
+      alertList: l.map(t => this.aVM(t)), hasAlertList: l.length > 0, noAlertList: l.length === 0,
+      alertEmptyTitle: s.aEstado === 'abiertas' ? 'No hay alertas abiertas' : 'Sin alertas',
+      alertEmptyText: s.aEstado === 'abiertas' ? 'Todo en orden: ningún cliente esperando de más ni situaciones para intervenir.' : 'No hay alertas que coincidan con los filtros.',
+    };
+  }
+  fld(sec, key, label, o) {
+    o = o || {}; const val = this.state.db.configuracion[sec][key]; const rk = sec + '.' + key, rev = !!this.state.reveal[rk];
+    return {
+      label, value: val == null ? '' : val, onChange: e => this.setCfg(sec, key, o.num ? Number(e.target.value) : e.target.value),
+      type: o.secret && !rev ? 'password' : (o.num ? 'number' : 'text'), isSecret: !!o.secret, revIcon: rev ? 'visibility_off' : 'visibility', revTitle: rev ? 'Ocultar' : 'Mostrar',
+      onReveal: () => this.setState(s => ({ reveal: { ...s.reveal, [rk]: !rev } })), readonly: !!o.ro, isCopy: !!o.copy, onCopy: () => this.copy(val),
+      help: o.help || '', hasHelp: !!o.help, suffix: o.suffix || '', hasSuffix: !!o.suffix, inBg: o.ro ? '#F4F3EF' : '#FFFFFF', ph: o.ph || '',
+    };
+  }
+  connVM(ch) {
+    const s = this.state, c = s.db.configuracion[ch];
+    const st = { conectado: { label: 'Conectado', fg: '#16703D', bg: '#E2F3E8', dot: '#1E8E4E' }, desconectado: { label: 'Desconectado', fg: '#B3261E', bg: '#FBE4E1', dot: '#D93025' }, esperando_qr: { label: 'Esperando QR', fg: '#8A5200', bg: '#FCEFD2', dot: '#E09B00' } }[c.estado];
+    const res = s.testResult[ch], testing = !!s.testing[ch], wa = ch === 'whatsapp';
+    return {
+      ...st, titulo: wa ? 'WhatsApp · Evolution API' : 'Instagram · API oficial de Meta', cuenta: wa ? c.numero : '@suplementosnort',
+      detail: c.estado === 'conectado' ? 'Última verificación: ' + this.fecha(c.verificadoAt) : c.estado === 'esperando_qr' ? 'Escaneá el código desde WhatsApp › Dispositivos vinculados.' : 'No se reciben mensajes. Revisá las credenciales y probá la conexión.',
+      showQR: wa && c.estado === 'esperando_qr', isWA: wa, testLabel: testing ? 'Probando…' : 'Probar conexión', testing,
+      onTest: () => this.probar(ch), hasResult: !!res && !testing, resultMsg: res ? res.msg : '', resultFg: res && res.ok ? '#16703D' : '#B3261E', resultBg: res && res.ok ? '#E2F3E8' : '#FBE4E1', resultIcon: res && res.ok ? 'check_circle' : 'error',
+      onQR: () => this.setCfg(ch, 'estado', 'esperando_qr'), onScan: () => { this.setState(s2 => ({ db: { ...s2.db, configuracion: { ...s2.db.configuracion, [ch]: { ...s2.db.configuracion[ch], estado: 'conectado', verificadoAt: this.nowIso() } } } })); this.toastMsg('WhatsApp vinculado'); },
+      onDisconnect: () => this.setCfg(ch, 'estado', 'desconectado'), showQRBtn: wa && c.estado !== 'esperando_qr', showDisconnect: c.estado === 'conectado',
+    };
+  }
+  probar(ch) {
+    this.setState(s => ({ testing: { ...s.testing, [ch]: true } }));
+    setTimeout(() => {
+      const c = this.state.db.configuracion[ch];
+      const ok = ch === 'whatsapp' ? !!(c.serverUrl && c.apiKey && c.instancia) : !!(c.appId && c.appSecret && c.accessToken && c.igBusinessId);
+      const msg = ok ? (ch === 'whatsapp' ? 'Conexión exitosa · la instancia "' + c.instancia + '" respondió en 142 ms.' : 'Conexión exitosa · cuenta de Instagram Business verificada.') : 'No se pudo conectar: faltan credenciales obligatorias.';
+      const estado = ok ? (c.estado === 'esperando_qr' ? 'esperando_qr' : 'conectado') : 'desconectado';
+      this.setState(s => ({ testing: { ...s.testing, [ch]: false }, testResult: { ...s.testResult, [ch]: { ok, msg } }, db: { ...s.db, configuracion: { ...s.db.configuracion, [ch]: { ...s.db.configuracion[ch], estado, verificadoAt: ok ? this.nowIso() : s.db.configuracion[ch].verificadoAt } } } }));
+    }, 1300);
+  }
+  updAl(patch) { this.setState(s => ({ dirty: true, db: { ...s.db, configuracion: { ...s.db.configuracion, alertas: { ...s.db.configuracion.alertas, ...patch } } } })); }
+  updEstado(id, patch) { this.upd(db => { db.estadosVenta = db.estadosVenta.map(e => e.id === id ? { ...e, ...patch } : e); }); }
+  moveEstado(i, dir) { const l = this.estadosOrd(); const j = i + dir; if (j < 0 || j >= l.length) return; [l[i], l[j]] = [l[j], l[i]]; this.upd(db => { db.estadosVenta = l.map((e, k) => ({ ...e, orden: k + 1 })); }); }
+  cfgVals() {
+    const s = this.state, db = s.db, cfg = db.configuracion, tab = s.cfgTab, isMobile = s.w < 760;
+    const tabs = [['whatsapp', 'WhatsApp'], ['instagram', 'Instagram'], ['ia', 'Análisis con IA'], ['alertas', 'Alertas y tiempos'], ['estados', 'Estados de venta'], ['usuarios', 'Usuarios']].map(([k, l]) => ({ label: l, onClick: () => this.setState({ cfgTab: k }), fg: tab === k ? '#17160F' : '#6B6960', bar: tab === k ? '#F2C200' : 'transparent', fw: tab === k ? '600' : '500' }));
+    let fields = [];
+    if (tab === 'whatsapp') fields = [this.fld('whatsapp', 'serverUrl', 'URL del servidor Evolution API', { ph: 'https://' }), this.fld('whatsapp', 'apiKey', 'API Key', { secret: true }), this.fld('whatsapp', 'instancia', 'Nombre de la instancia'), this.fld('whatsapp', 'numero', 'Número de WhatsApp asociado'), this.fld('whatsapp', 'webhookUrl', 'URL de webhook', { ro: true, copy: true, help: 'Configurala en Evolution API para recibir el evento MESSAGES_UPSERT.' })];
+    if (tab === 'instagram') fields = [this.fld('instagram', 'appId', 'App ID'), this.fld('instagram', 'appSecret', 'App Secret', { secret: true }), this.fld('instagram', 'pageId', 'ID de la página de Facebook vinculada'), this.fld('instagram', 'igBusinessId', 'ID de la cuenta de Instagram Business'), this.fld('instagram', 'accessToken', 'Token de acceso', { secret: true }), this.fld('instagram', 'verifyToken', 'Token de verificación del webhook', { secret: true }), this.fld('instagram', 'webhookUrl', 'URL de webhook', { ro: true, copy: true, help: 'Pegala en Meta for Developers › Webhooks junto al token de verificación.' })];
+    if (tab === 'ia') fields = [this.fld('ia', 'cadaMinutos', 'Frecuencia por tiempo', { num: true, suffix: 'minutos' }), this.fld('ia', 'cadaMensajes', 'Frecuencia por volumen', { num: true, suffix: 'mensajes nuevos' })];
+    if (tab === 'alertas') fields = [this.fld('alertas', 'advertenciaMin', 'Espera para alerta de advertencia', { num: true, suffix: 'minutos' }), this.fld('alertas', 'criticoMin', 'Espera para alerta crítica', { num: true, suffix: 'minutos' })];
+    const pesos = cfg.ia.pesos, ptot = Object.values(pesos).reduce((a, b) => a + Number(b), 0);
+    const ests = this.estadosOrd();
+    const uso = id => db.conversaciones.filter(c => c.estadoId === id).length;
+    const um = s.userModal;
+    return {
+      cfgTabs: tabs, cfgFields: fields, hasFields: fields.length > 0,
+      cfgFieldsTitle: { whatsapp: 'Credenciales de Evolution API', instagram: 'Credenciales de Meta', ia: 'Frecuencia de análisis', alertas: 'Tiempos de espera del cliente' }[tab] || '',
+      isConnTab: tab === 'whatsapp' || tab === 'instagram', conn: (tab === 'whatsapp' || tab === 'instagram') ? this.connVM(tab) : {},
+      isIA: tab === 'ia', isAlertasTab: tab === 'alertas', isEstados: tab === 'estados', isUsuarios: tab === 'usuarios',
+      showSave: ['whatsapp', 'instagram', 'ia', 'alertas'].includes(tab), dirtyTxt: s.dirty ? 'Cambios sin guardar' : 'Todo guardado',
+      onSave: () => { this.setState({ dirty: false }); this.toastMsg('Configuración guardada'); },
+      iaRule: 'Se analiza cada ' + cfg.ia.cadaMinutos + ' minutos o cada ' + cfg.ia.cadaMensajes + ' mensajes nuevos, lo que ocurra primero. Las conversaciones sin mensajes nuevos no se vuelven a analizar.',
+      provOpts: Object.keys(this.MODELOS).map(p => ({ value: p, label: p })), proveedor: cfg.ia.proveedor,
+      onProv: e => { const p = e.target.value; this.setCfg('ia', 'proveedor', p); this.setCfg('ia', 'modelo', this.MODELOS[p][0]); },
+      modelOpts: (this.MODELOS[cfg.ia.proveedor] || []).map(m => ({ value: m, label: m })), modelo: cfg.ia.modelo, onModelo: e => this.setCfg('ia', 'modelo', e.target.value),
+      iaKey: this.fld('ia', 'apiKey', 'API Key del proveedor', { secret: true }),
+      pesos: this.CRIT.map(([k, n]) => ({ nombre: n, value: pesos[k], label: pesos[k] + '%', onChange: e => this.setCfg('ia', 'pesos', { ...this.state.db.configuracion.ia.pesos, [k]: Number(e.target.value) }) })),
+      pesoMsg: ptot === 100 ? 'Total 100%' : 'Total ' + ptot + '% · debe sumar 100%', pesoFg: ptot === 100 ? '#16703D' : '#B3261E', pesoBg: ptot === 100 ? '#E2F3E8' : '#FBE4E1', pesoOff: ptot !== 100,
+      onNormalizar: () => { const k = Object.keys(pesos); const t = ptot || 1; const n = {}; let acc = 0; k.forEach((kk, i) => { n[kk] = i === k.length - 1 ? 100 - acc : Math.round(pesos[kk] / t * 100 / 5) * 5; acc += n[kk]; }); this.setCfg('ia', 'pesos', n); },
+      thrWarn: cfg.alertas.criticoMin <= cfg.alertas.advertenciaMin, thrWarnTxt: 'El tiempo crítico debe ser mayor que el de advertencia.',
+      horario: cfg.alertas.horario.map((h, i) => { const set = p => this.updAl({ horario: this.state.db.configuracion.alertas.horario.map((x, j) => j === i ? { ...x, ...p } : x) }); return { dia: h.dia, toggle: this.tg(h.activo, () => set({ activo: !h.activo })), desde: h.desde, hasta: h.hasta, onDesde: e => set({ desde: e.target.value }), onHasta: e => set({ hasta: e.target.value }), op: h.activo ? '1' : '.4', estado: h.activo ? 'Abierto' : 'Cerrado' }; }),
+      pausaTg: this.tg(cfg.alertas.pausarFueraHorario, () => this.updAl({ pausarFueraHorario: !cfg.alertas.pausarFueraHorario })),
+      situaciones: cfg.alertas.situaciones.map((x, i) => ({ nombre: x.nombre, desc: x.descripcion, toggle: this.tg(x.activo, () => this.updAl({ situaciones: this.state.db.configuracion.alertas.situaciones.map((y, j) => j === i ? { ...y, activo: !y.activo } : y) })) })),
+      notifTg: this.tg(cfg.alertas.notificaciones.app, () => this.updAl({ notificaciones: { ...cfg.alertas.notificaciones, app: !cfg.alertas.notificaciones.app } })),
+      estRows: ests.map((e, i) => ({
+        nombre: e.nombre, color: e.color, orden: String(i + 1), onNombre: ev => this.updEstado(e.id, { nombre: ev.target.value }),
+        onUp: () => this.moveEstado(i, -1), onDown: () => this.moveEstado(i, 1), upOp: i > 0 ? '1' : '.3', downOp: i < ests.length - 1 ? '1' : '.3',
+        toggle: this.tg(e.activo, () => this.updEstado(e.id, { activo: !e.activo })), uso: uso(e.id) + ' conv.', canDelete: uso(e.id) === 0,
+        onDelete: () => { this.upd(db2 => { db2.estadosVenta = db2.estadosVenta.filter(x => x.id !== e.id); }); this.toastMsg('Estado eliminado'); },
+        onPal: () => this.setState(st => ({ palOpen: st.palOpen === e.id ? null : e.id })), palOpen: s.palOpen === e.id,
+        palette: this.PALETTE.map(c => ({ c, ring: c === e.color ? '0 0 0 2px #fff, 0 0 0 4px #17160F' : 'none', onPick: () => { this.updEstado(e.id, { color: c }); this.setState({ palOpen: null }); } })),
+      })),
+      onAddEstado: () => { this.upd(db2 => { db2.estadosVenta = [...db2.estadosVenta, { id: 'e' + Date.now(), nombre: 'Nuevo estado', color: '#B5446E', orden: db2.estadosVenta.length + 1, activo: true }]; }); },
+      userRows: db.usuarios.map(u => {
+        const me = u.id === s.user.id, cd = s.confirmDel === u.id;
+        return { nombre: u.nombre + (me ? ' (vos)' : ''), email: u.email, ini: this.initials(u.nombre), rol: this.ROLES[u.rol], toggle: this.tg(u.activo, () => { if (me) return this.toastMsg('No podés desactivar tu propio usuario'); this.upd(db2 => { db2.usuarios = db2.usuarios.map(x => x.id === u.id ? { ...x, activo: !x.activo } : x); }); }), activoTxt: u.activo ? 'Activo' : 'Inactivo', op: u.activo ? '1' : '.55',
+          onEdit: () => this.setState({ userModal: { ...u, error: '' } }), canDelete: !me && !cd, confirming: cd,
+          onDelete: () => this.setState({ confirmDel: u.id }), onCancelDel: () => this.setState({ confirmDel: null }),
+          onConfirmDel: () => { this.upd(db2 => { db2.usuarios = db2.usuarios.filter(x => x.id !== u.id); }); this.setState({ confirmDel: null }); this.toastMsg('Usuario eliminado'); } };
+      }),
+      onNewUser: () => this.setState({ userModal: { id: null, nombre: '', email: '', rol: 'vendedor', activo: true, error: '' } }),
+      userCols: isMobile ? '1fr' : 'minmax(0,1.4fr) minmax(0,1fr) auto',
+    };
+  }
+  saveUser() {
+    const m = this.state.userModal, db = this.state.db;
+    if (!m.nombre.trim()) return this.setState({ userModal: { ...m, error: 'Ingresá el nombre.' } });
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m.email.trim())) return this.setState({ userModal: { ...m, error: 'Ingresá un email válido.' } });
+    if (db.usuarios.some(u => u.email.toLowerCase() === m.email.trim().toLowerCase() && u.id !== m.id)) return this.setState({ userModal: { ...m, error: 'Ya existe un usuario con ese email.' } });
+    const rec = { nombre: m.nombre.trim(), email: m.email.trim(), rol: m.rol, activo: m.activo };
+    this.upd(d => { d.usuarios = m.id ? d.usuarios.map(u => u.id === m.id ? { ...u, ...rec } : u) : [...d.usuarios, { id: 'u' + Date.now(), creadoAt: this.nowIso(), ...rec }]; });
+    this.setState({ userModal: null }); this.toastMsg(m.id ? 'Usuario actualizado' : 'Usuario creado');
+  }
+  renderVals() {
+    const s = this.state, P = this.props, w = s.w, isMobile = w < 760, demo = P.estadoDemo || 'normal';
+    const base = { isMobile, toast: s.toast, hasToast: !!s.toast, toastBottom: isMobile && s.user ? '80px' : '24px', hasUserModal: false, um: {} };
+    if (!s.user) {
+      return { ...base, showLogin: true, showApp: false, loginEmail: s.loginEmail, loginPass: s.loginPass,
+        onLoginEmail: e => this.setState({ loginEmail: e.target.value, loginError: '' }), onLoginPass: e => this.setState({ loginPass: e.target.value, loginError: '' }),
+        onLogin: e => { if (e && e.preventDefault) e.preventDefault(); this.doLogin(); },
+        loginError: s.loginError || (s.loadError ? 'No se pudieron cargar los datos de ejemplo.' : ''), hasLoginError: !!(s.loginError || s.loadError),
+        loginBtn: s.db ? 'Ingresar' : 'Cargando…',
+        demoUsers: s.db ? s.db.usuarios.filter(u => u.activo).map(u => ({ nombre: u.nombre, rol: this.ROLES[u.rol], email: u.email, ini: this.initials(u.nombre), onClick: () => this.doLogin(u.email) })) : [] };
+    }
+    const db = s.db, u = s.user, role = u.rol, isVend = role === 'vendedor';
+    const allowed = { admin: ['dashboard', 'conversaciones', 'desempeno', 'alertas', 'config'], supervisor: ['dashboard', 'conversaciones', 'desempeno', 'alertas'], vendedor: ['conversaciones', 'desempeno'] }[role];
+    const screen = allowed.includes(s.screen) ? s.screen : allowed[0];
+    const NAV = { dashboard: ['Panel principal', 'space_dashboard', 'Panel'], conversaciones: ['Conversaciones', 'forum', 'Chats'], desempeno: [isVend ? 'Mi desempeño' : 'Desempeño', 'insights', 'Desempeño'], alertas: ['Alertas', 'notifications', 'Alertas'], config: ['Configuración', 'settings', 'Ajustes'] };
+    const sideLabels = w >= 1100;
+    const badge = isVend || demo === 'vacio' ? 0 : db.alertas.filter(a => a.estado === 'abierta').length;
+    const nav = allowed.map(k => { const on = k === screen; return { label: NAV[k][0], short: NAV[k][2], icon: NAV[k][1], onClick: () => this.go(k), bg: on ? '#2B2A22' : 'transparent', fg: on ? '#FFFFFF' : '#B9B6AA', ic: on ? '#F2C200' : '#8F8C80', showLabel: sideLabels, justify: sideLabels ? 'flex-start' : 'center', hasBadge: k === 'alertas' && badge > 0, badge: String(badge), badgePos: sideLabels ? 'static' : 'absolute', mfg: on ? '#17160F' : '#7A776C', mic: on ? '#17160F' : '#8F8C80', mbar: on ? '#F2C200' : 'transparent' }; });
+    const appLoading = demo === 'carga' || s.retrying || s.booting;
+    const appError = !appLoading && demo === 'error' && !s.retried;
+    const ready = !appLoading && !appError;
+    const um = s.userModal;
+    const v = { ...base, showLogin: false, showApp: true, nav, sideLabels, brandJustify: sideLabels ? 'flex-start' : 'center', sidebarW: sideLabels ? '236px' : '72px', showSidebar: !isMobile, showBottomBar: isMobile, showTopbar: isMobile,
+      userName: u.nombre, userRole: this.ROLES[role], userIni: this.initials(u.nombre), onLogout: () => this.setState({ user: null, selConv: null, loginError: '', userModal: null }),
+      hasBell: !isVend, badge: String(badge), hasBadge: badge > 0, onBell: () => this.go('alertas'),
+      pageTitle: NAV[screen][0], appLoading, appError, onRetry: () => { this.setState({ retrying: true }); setTimeout(() => this.setState({ retrying: false, retried: true }), 900); },
+      isDash: ready && screen === 'dashboard', isConv: ready && screen === 'conversaciones', isPerf: ready && screen === 'desempeno', isAlerts: ready && screen === 'alertas', isCfg: ready && screen === 'config',
+      pad: isMobile ? '18px 14px 96px' : '28px 32px 48px', h1Size: isMobile ? '22px' : '26px',
+      rangeOpts: [7, 14, 30].map(n => this.pill(n + ' días', s.range === n, () => this.setState({ range: n }))),
+      canalOpts: [['todos', 'Todos'], ['whatsapp', 'WhatsApp'], ['instagram', 'Instagram']].map(([k, l]) => this.pill(l, s.canal === k, () => this.setState({ canal: k }))),
+      rangeLabel: 'Últimos ' + s.range + ' días', canalLabel: s.canal === 'todos' ? 'Todos los canales' : this.chan(s.canal).label,
+      hasUserModal: !!um,
+      um: um ? { title: um.id ? 'Editar usuario' : 'Nuevo usuario', nombre: um.nombre, email: um.email, rol: um.rol, error: um.error, hasError: !!um.error,
+        onNombre: e => this.setState({ userModal: { ...this.state.userModal, nombre: e.target.value, error: '' } }), onEmail: e => this.setState({ userModal: { ...this.state.userModal, email: e.target.value, error: '' } }),
+        onRol: e => this.setState({ userModal: { ...this.state.userModal, rol: e.target.value } }), rolOpts: Object.keys(this.ROLES).map(k => ({ value: k, label: this.ROLES[k] })),
+        toggle: this.tg(um.activo, () => this.setState({ userModal: { ...this.state.userModal, activo: !this.state.userModal.activo } })), activoTxt: um.activo ? 'Activo' : 'Inactivo',
+        onSave: () => this.saveUser(), onCancel: () => this.setState({ userModal: null }), saveLabel: um.id ? 'Guardar cambios' : 'Crear usuario' } : {},
+    };
+    if (!ready) return v;
+    if (screen === 'dashboard') Object.assign(v, this.dashVals());
+    if (screen === 'conversaciones') Object.assign(v, this.convVals());
+    if (screen === 'desempeno') Object.assign(v, this.perfVals());
+    if (screen === 'alertas') Object.assign(v, this.alertVals());
+    if (screen === 'config') Object.assign(v, this.cfgVals());
+    return v;
+  }
+}
+</script>
+</body>
+</html>

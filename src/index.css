@@ -1,0 +1,52 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #f4f3ef;
+  color: #17160f;
+  font-family: 'Archivo', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+* {
+  box-sizing: border-box;
+}
+a {
+  color: #17160f;
+  text-decoration: underline;
+  text-decoration-color: #f2c200;
+  text-underline-offset: 3px;
+}
+a:hover {
+  color: #d42a2a;
+}
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+}
+@keyframes nortPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes nortSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Estados hover (los estilos inline no admiten :hover) */
+.hv-1:hover {
+  border-color: #17160f !important;
+}
+.hv-2:hover {
+  background: #2b2a22 !important;
+}
+.hv-3:hover {
+  background: #fbfaf6 !important;
+}

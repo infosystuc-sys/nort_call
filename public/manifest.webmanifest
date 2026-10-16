@@ -1,0 +1,11 @@
+{
+  "name": "Nort Monitor",
+  "short_name": "Nort",
+  "description": "Monitor de ventas de WhatsApp e Instagram de Suplementos Nort",
+  "lang": "es",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F4F3EF",
+  "theme_color": "#17160F",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
