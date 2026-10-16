@@ -450,6 +450,27 @@ export default function Conversaciones({ v }) {
                                   >
                                     {it?.chLabel}
                                   </span>
+                                  {it?.hasScore ? (
+                                    <span
+                                      title={it?.scoreTitle}
+                                      style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '3px',
+                                        fontSize: '11.5px',
+                                        fontWeight: '700',
+                                        padding: '2px 8px',
+                                        borderRadius: '999px',
+                                        background: it?.scoreBg,
+                                        color: it?.scoreFg,
+                                      }}
+                                    >
+                                      <span style={{ fontFamily: "'Material Symbols Rounded'", fontSize: '13px', lineHeight: '1' }}>
+                                        star
+                                      </span>
+                                      {it?.scoreLabel}
+                                    </span>
+                                  ) : null}
                                   {it?.esperando ? (
                                     <>
                                       <span
@@ -1776,6 +1797,21 @@ export default function Conversaciones({ v }) {
                               {it?.preview}
                             </span>
                             <span style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                              {it?.hasScore ? (
+                                <span
+                                  title={it?.scoreTitle}
+                                  style={{
+                                    fontSize: '11px',
+                                    fontWeight: '700',
+                                    padding: '2px 7px',
+                                    borderRadius: '999px',
+                                    background: it?.scoreBg,
+                                    color: it?.scoreFg,
+                                  }}
+                                >
+                                  {'★ ' + it?.scoreLabel}
+                                </span>
+                              ) : null}
                               {it?.esperando ? (
                                 <>
                                   <span
