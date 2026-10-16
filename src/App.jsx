@@ -26,6 +26,7 @@ export default class App extends Component {
     fEsperando: false,
     convView: 'lista',
     selConv: null,
+    hitIdx: null,
     detailTab: 'chat',
     analizando: false,
     noteDraft: '',
@@ -331,6 +332,52 @@ export default class App extends Component {
   sc(p) {
     return p == null ? '#A19E92' : p >= 8 ? '#1E8E4E' : p >= 6 ? '#C98500' : '#C62828';
   }
+  // Minúsculas y sin acentos, carácter por carácter, para que los índices coincidan con el texto original.
+  fold(t) {
+    let r = '';
+    for (const c of t || '') {
+      const f = c.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+      r += f.length === c.length ? f : c.toLowerCase().length === c.length ? c.toLowerCase() : c;
+    }
+    return r;
+  }
+  // Parte el texto en tramos [{t, hit}] marcando las coincidencias de la búsqueda.
+  // Con recorte, deja solo un fragmento alrededor de la primera coincidencia.
+  partes(texto, q, recorte) {
+    texto = texto || '';
+    if (!q) return [{ t: texto, hit: false }];
+    const f = this.fold(texto);
+    let ini = 0,
+      fin = texto.length;
+    const i0 = f.indexOf(q);
+    if (i0 < 0) return [{ t: texto, hit: false }];
+    if (recorte && texto.length > recorte) {
+      ini = Math.max(0, i0 - Math.floor((recorte - q.length) / 3));
+      fin = Math.min(texto.length, ini + recorte);
+      ini = Math.max(0, fin - recorte);
+    }
+    const out = [];
+    if (ini > 0) out.push({ t: '…', hit: false });
+    let p = ini;
+    for (let i = f.indexOf(q, ini); i >= 0 && i + q.length <= fin; i = f.indexOf(q, i + q.length)) {
+      if (i > p) out.push({ t: texto.slice(p, i), hit: false });
+      out.push({ t: texto.slice(i, i + q.length), hit: true });
+      p = i + q.length;
+    }
+    if (p < fin) out.push({ t: texto.slice(p, fin), hit: false });
+    if (fin < texto.length) out.push({ t: '…', hit: false });
+    return out;
+  }
+  qBusqueda() {
+    return this.fold(this.state.q.trim());
+  }
+  // Mueve el chat hasta la coincidencia actual de la búsqueda.
+  irACoincidencia(idx) {
+    this.setState({ hitIdx: idx }, () => {
+      const el = document.querySelector('[data-hit-actual="1"]');
+      if (el) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    });
+  }
   fmt1(x) {
     return x == null || isNaN(x) ? '—' : (Math.round(x * 10) / 10).toFixed(1).replace('.', ',');
   }
@@ -423,15 +470,19 @@ export default class App extends Component {
     }));
   }
   openConv(id) {
-    this.setState({
-      screen: 'conversaciones',
-      selConv: id,
-      detailTab: 'chat',
-      noteDraft: '',
-      convView: 'lista',
-      resolving: null,
-      confirmDelConv: null,
-    });
+    this.setState(
+      {
+        screen: 'conversaciones',
+        selConv: id,
+        hitIdx: null,
+        detailTab: 'chat',
+        noteDraft: '',
+        convView: 'lista',
+        resolving: null,
+        confirmDelConv: null,
+      },
+      () => this.irACoincidencia(null),
+    );
   }
   // Elimina la conversación con todo lo que depende de ella, y el cliente si se queda sin conversaciones.
   eliminarConversacion(convId) {
@@ -761,10 +812,19 @@ export default class App extends Component {
       lv = this.lvl(x.nivel || 'normal'),
       sel = this.state.selConv === x.id;
     const crit = x.alertas.some(a => a.nivel === 'critico');
+    // Con búsqueda: la vista previa muestra el mensaje más reciente que coincide, con el texto resaltado.
+    const q = this.qBusqueda();
+    const hits = q ? x.msgs.filter(m => this.fold(m.texto).includes(q)) : [];
+    const pm = hits.length ? hits[hits.length - 1] : x.last;
+    const prefijo = pm && pm.autor === 'vendedor' ? 'Vendedor: ' : '';
     return {
       id: x.id,
       estadoId: x.c.estadoId,
       nombre: x.cli.nombre,
+      nombrePartes: this.partes(x.cli.nombre, q),
+      previewPartes: pm ? [{ t: prefijo, hit: false }, ...this.partes(pm.texto, hits.length ? q : '', 90)] : [],
+      hasMatch: hits.length > 0,
+      matchLabel: hits.length === 1 ? '1 mensaje' : hits.length + ' mensajes',
       sub: x.cli.empresa || x.cli.usuario,
       ini: this.initials(x.cli.nombre),
       chLabel: ch.label,
@@ -772,7 +832,7 @@ export default class App extends Component {
       chBg: ch.bg,
       chFg: ch.fg,
       preview: x.last ? (x.last.autor === 'vendedor' ? 'Vendedor: ' : '') + x.last.texto : '',
-      hora: x.last ? this.rel(x.last.enviadoAt) : '',
+      hora: pm ? this.rel(pm.enviadoAt) : '',
       estNombre: x.est.nombre,
       estColor: x.est.color,
       estFg: 'color-mix(in oklch, ' + x.est.color + ' 70%, black)',
@@ -898,6 +958,11 @@ export default class App extends Component {
     const vend = (I.usr[x.c.vendedorId] || { nombre: 'Vendedor' }).nombre.split(' ')[0];
     const thread = [];
     let lastDay = null;
+    // Coincidencias de la búsqueda en el chat; sin elegir, la actual es la más reciente.
+    const q = this.qBusqueda();
+    const nHits = q ? x.msgs.filter(m => this.fold(m.texto).includes(q)).length : 0;
+    const hitIdx = nHits ? (s.hitIdx == null ? nHits - 1 : Math.min(s.hitIdx, nHits - 1)) : 0;
+    let h = 0;
     x.msgs.forEach(m => {
       const k = this.dk(m.enviadoAt);
       if (k !== lastDay) {
@@ -905,13 +970,18 @@ export default class App extends Component {
         lastDay = k;
       }
       const cl = m.autor === 'cliente';
+      const hit = nHits > 0 && this.fold(m.texto).includes(q);
+      const actual = hit && h++ === hitIdx;
       thread.push({
         isDay: false,
         isMsg: true,
         texto: m.texto,
+        partes: this.partes(m.texto, hit ? q : ''),
+        hitActual: actual ? '1' : undefined,
         align: cl ? 'flex-start' : 'flex-end',
         bg: cl ? '#FFFFFF' : '#FFF0B3',
-        bd: cl ? '#E4E1D8' : '#EBD587',
+        bd: actual ? '#E08A00' : cl ? '#E4E1D8' : '#EBD587',
+        ring: actual ? '0 0 0 3px rgba(242,194,0,.45)' : 'none',
         radius: cl ? '4px 14px 14px 14px' : '14px 4px 14px 14px',
         meta: (cl ? x.cli.nombre.split(' ')[0] + ' · cliente' : vend + ' · vendedor') + ' · ' + this.hora(m.enviadoAt),
       });
@@ -993,6 +1063,10 @@ export default class App extends Component {
       espFg: lv.fg,
       espBg: lv.bg,
       thread,
+      hasHits: nHits > 0,
+      hitsLabel: nHits ? 'Coincidencia ' + (hitIdx + 1) + ' de ' + nHits + ' · «' + s.q.trim() + '»' : '',
+      onHitPrev: () => this.irACoincidencia((hitIdx - 1 + nHits) % nHits),
+      onHitNext: () => this.irACoincidencia((hitIdx + 1) % nHits),
       readOnly: 'Solo lectura · el vendedor responde desde la app de ' + ch.label,
       canEditEstado: !isVend,
       noEditEstado: isVend,
@@ -1047,7 +1121,7 @@ export default class App extends Component {
       isMobile = w < 760,
       isVend = s.user.rol === 'vendedor';
     const all = this.convsAll(),
-      q = s.q.trim().toLowerCase();
+      q = this.qBusqueda();
     let list = all.filter(x => this.byCanal(x));
     if (s.fEstado !== 'todos') list = list.filter(x => x.c.estadoId === s.fEstado);
     if (!isVend && s.fAlerta === 'con') list = list.filter(x => x.alertas.length);
@@ -1056,8 +1130,8 @@ export default class App extends Component {
     if (q)
       list = list.filter(
         x =>
-          (x.cli.nombre + ' ' + x.cli.usuario + ' ' + (x.cli.empresa || '')).toLowerCase().includes(q) ||
-          x.msgs.some(m => m.texto.toLowerCase().includes(q)),
+          this.fold(x.cli.nombre + ' ' + x.cli.usuario + ' ' + (x.cli.empresa || '')).includes(q) ||
+          x.msgs.some(m => this.fold(m.texto).includes(q)),
       );
     list.sort((a, b) => ((b.last ? b.last.enviadoAt : '') > (a.last ? a.last.enviadoAt : '') ? 1 : -1));
     const filtersOn = s.fEstado !== 'todos' || s.fAlerta !== 'todos' || s.fEsperando || !!q || s.canal !== 'todos';
@@ -1070,7 +1144,7 @@ export default class App extends Component {
     const espCount = all.filter(x => x.esperando && this.byCanal(x)).length;
     return {
       q: s.q,
-      onQ: e => this.setState({ q: e.target.value }),
+      onQ: e => this.setState({ q: e.target.value, hitIdx: null }),
       estadoOpts: [{ value: 'todos', label: 'Todos los estados' }, ...ests.map(e => ({ value: e.id, label: e.nombre }))],
       fEstado: s.fEstado,
       onFEstado: e => this.setState({ fEstado: e.target.value }),
@@ -1130,7 +1204,7 @@ export default class App extends Component {
       kCols: ests.map(e => {
         const cards = items
           .filter(i => i.estadoId === e.id)
-          .map(i => ({ ...i, onClick: () => this.setState({ convView: 'lista', selConv: i.id, detailTab: 'chat' }) }));
+          .map(i => ({ ...i, onClick: () => this.openConv(i.id) }));
         return { nombre: e.nombre, color: e.color, count: String(cards.length), cards, empty: cards.length === 0 };
       }),
     };

@@ -1,5 +1,18 @@
 import { Fragment } from 'react';
 
+// Texto con las coincidencias de la búsqueda resaltadas.
+function Resaltado({ partes }) {
+  return (partes || []).map((p, i) =>
+    p.hit ? (
+      <mark key={i} style={{ background: '#FFD94D', color: '#17160F', borderRadius: '3px', padding: '0 1px' }}>
+        {p.t}
+      </mark>
+    ) : (
+      <Fragment key={i}>{p.t}</Fragment>
+    ),
+  );
+}
+
 export default function Conversaciones({ v }) {
   return (
     <>
@@ -402,7 +415,7 @@ export default function Conversaciones({ v }) {
                                       textOverflow: 'ellipsis',
                                     }}
                                   >
-                                    {it?.nombre}
+                                    <Resaltado partes={it?.nombrePartes} />
                                   </span>
                                   <span
                                     style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: '11.5px', color: '#8A877D', flex: 'none' }}
@@ -419,9 +432,30 @@ export default function Conversaciones({ v }) {
                                     textOverflow: 'ellipsis',
                                   }}
                                 >
-                                  {it?.preview}
+                                  <Resaltado partes={it?.previewPartes} />
                                 </span>
                                 <span style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', alignItems: 'center' }}>
+                                  {it?.hasMatch ? (
+                                    <span
+                                      title="Mensajes que contienen el texto buscado"
+                                      style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '3px',
+                                        fontSize: '11.5px',
+                                        fontWeight: '700',
+                                        padding: '2px 8px',
+                                        borderRadius: '999px',
+                                        background: '#FFF0B3',
+                                        color: '#7A5A00',
+                                      }}
+                                    >
+                                      <span style={{ fontFamily: "'Material Symbols Rounded'", fontSize: '13px', lineHeight: '1' }}>
+                                        search
+                                      </span>
+                                      {it?.matchLabel}
+                                    </span>
+                                  ) : null}
                                   <span
                                     style={{
                                       display: 'inline-flex',
@@ -826,6 +860,54 @@ export default function Conversaciones({ v }) {
                           {v.showChat ? (
                             <>
                               <div style={{ flex: '1', minWidth: '0', display: 'flex', flexDirection: 'column', minHeight: '0' }}>
+                                {v.d?.hasHits ? (
+                                  <div
+                                    style={{
+                                      flex: 'none',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: '8px',
+                                      padding: '7px 10px 7px 14px',
+                                      background: '#FFF7D6',
+                                      borderBottom: '1px solid #EBD587',
+                                      fontSize: '12.5px',
+                                      color: '#5E4700',
+                                    }}
+                                  >
+                                    <span style={{ fontFamily: "'Material Symbols Rounded'", fontSize: '17px', lineHeight: '1' }}>search</span>
+                                    <span
+                                      style={{ flex: '1', minWidth: '0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: '600' }}
+                                    >
+                                      {v.d?.hitsLabel}
+                                    </span>
+                                    {[
+                                      ['keyboard_arrow_up', 'Coincidencia anterior', v.d?.onHitPrev],
+                                      ['keyboard_arrow_down', 'Coincidencia siguiente', v.d?.onHitNext],
+                                    ].map(([icon, title, fn]) => (
+                                      <button
+                                        key={icon}
+                                        title={title}
+                                        onClick={fn}
+                                        style={{
+                                          width: '30px',
+                                          height: '30px',
+                                          display: 'grid',
+                                          placeItems: 'center',
+                                          border: '1px solid #EBD587',
+                                          borderRadius: '7px',
+                                          background: '#fff',
+                                          color: '#5E4700',
+                                          cursor: 'pointer',
+                                          fontFamily: "'Material Symbols Rounded'",
+                                          fontSize: '20px',
+                                          lineHeight: '1',
+                                        }}
+                                      >
+                                        {icon}
+                                      </button>
+                                    ))}
+                                  </div>
+                                ) : null}
                                 <div
                                   style={{
                                     flex: '1',
@@ -861,12 +943,14 @@ export default function Conversaciones({ v }) {
                                         <>
                                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: m?.align, gap: '3px' }}>
                                             <div
+                                              data-hit-actual={m?.hitActual}
                                               style={{
                                                 maxWidth: 'min(80%,540px)',
                                                 padding: '9px 12px',
                                                 borderRadius: m?.radius,
                                                 background: m?.bg,
                                                 border: `1px solid ${m?.bd}`,
+                                                boxShadow: m?.ring,
                                                 fontSize: '14px',
                                                 lineHeight: '1.45',
                                                 whiteSpace: 'pre-wrap',
@@ -874,7 +958,7 @@ export default function Conversaciones({ v }) {
                                                 color: '#17160F',
                                               }}
                                             >
-                                              {m?.texto}
+                                              <Resaltado partes={m?.partes} />
                                             </div>
                                             <span style={{ fontSize: '11px', color: '#8A877D', fontFamily: "'IBM Plex Mono',monospace" }}>
                                               {m?.meta}
@@ -1777,7 +1861,7 @@ export default function Conversaciones({ v }) {
                                   textOverflow: 'ellipsis',
                                 }}
                               >
-                                {it?.nombre}
+                                <Resaltado partes={it?.nombrePartes} />
                               </span>
                               <span style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: '11px', color: '#8A877D' }}>
                                 {it?.hora}
@@ -1794,9 +1878,23 @@ export default function Conversaciones({ v }) {
                                 overflow: 'hidden',
                               }}
                             >
-                              {it?.preview}
+                              <Resaltado partes={it?.previewPartes} />
                             </span>
                             <span style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                              {it?.hasMatch ? (
+                                <span
+                                  style={{
+                                    fontSize: '11px',
+                                    fontWeight: '700',
+                                    padding: '2px 7px',
+                                    borderRadius: '999px',
+                                    background: '#FFF0B3',
+                                    color: '#7A5A00',
+                                  }}
+                                >
+                                  {'🔍 ' + it?.matchLabel}
+                                </span>
+                              ) : null}
                               {it?.hasScore ? (
                                 <span
                                   title={it?.scoreTitle}
