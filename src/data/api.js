@@ -88,6 +88,7 @@ const FILAS = {
       canalId: c.canal_id,
       vendedorId: c.vendedor_id,
       estadoId: c.estado_id,
+      interna: !!c.interna,
       creadaAt: c.creada_at,
     }),
   },
@@ -240,6 +241,10 @@ export const eliminarConversacion = enSupabase(async conversacionId =>
 
 export const cambiarEstado = enSupabase(async (conversacionId, estadoId) =>
   ok(await supabase.rpc('nc_cambiar_estado', { p_conversacion_id: conversacionId, p_estado_id: estadoId })),
+);
+
+export const marcarInterna = enSupabase(async (conversacionId, interna) =>
+  ok(await supabase.from('nc_conversaciones').update({ interna }).eq('id', conversacionId)),
 );
 
 export const crearAnalisis = enSupabase(async a =>

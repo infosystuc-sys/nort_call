@@ -13,6 +13,28 @@ function Resaltado({ partes }) {
   );
 }
 
+function ChipInterna({ grande }) {
+  return (
+    <span
+      title="Conversación interna: no se analiza con IA"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '4px',
+        fontSize: grande ? '12px' : '11.5px',
+        fontWeight: '600',
+        padding: grande ? '3px 9px' : '2px 8px',
+        borderRadius: '999px',
+        background: '#ECEAE3',
+        color: '#5E5B52',
+      }}
+    >
+      <span style={{ fontFamily: "'Material Symbols Rounded'", fontSize: '13px', lineHeight: '1' }}>lock</span>
+      Interna
+    </span>
+  );
+}
+
 export default function Conversaciones({ v }) {
   return (
     <>
@@ -321,6 +343,34 @@ export default function Conversaciones({ v }) {
                     {v.espPill?.count}
                   </span>
                 </button>
+                {v.showInternasCheck ? (
+                  <label
+                    title="Conversaciones internas: no son ventas y no se analizan con IA"
+                    style={{
+                      height: '40px',
+                      padding: '0 12px',
+                      border: '1px solid #DEDBD1',
+                      borderRadius: '9px',
+                      background: v.verInternas ? '#F2EFE6' : '#FFFFFF',
+                      color: '#17160F',
+                      fontSize: '13.5px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={!!v.verInternas}
+                      onChange={v.onVerInternas}
+                      style={{ width: '16px', height: '16px', accentColor: '#17160F', margin: '0', cursor: 'pointer' }}
+                    />
+                    {v.internasLabel}
+                  </label>
+                ) : null}
                 {v.showClear ? (
                   <>
                     <button
@@ -484,6 +534,7 @@ export default function Conversaciones({ v }) {
                                   >
                                     {it?.chLabel}
                                   </span>
+                                  {it?.esInterna ? <ChipInterna /> : null}
                                   {it?.hasScore ? (
                                     <span
                                       title={it?.scoreTitle}
@@ -752,7 +803,36 @@ export default function Conversaciones({ v }) {
                                 </span>
                               </>
                             ) : null}
+                            {v.d?.esInterna && !v.d?.canEditInterna ? <ChipInterna grande /> : null}
                           </div>
+                          {v.d?.canEditInterna ? (
+                            <label
+                              title="Las conversaciones internas no son ventas: se ocultan de la lista y no se analizan con IA"
+                              style={{
+                                height: '36px',
+                                padding: '0 11px',
+                                border: `1px solid ${v.d?.esInterna ? '#5E5B52' : '#E4E1D8'}`,
+                                borderRadius: '8px',
+                                background: v.d?.esInterna ? '#ECEAE3' : '#fff',
+                                color: '#17160F',
+                                fontSize: '12.5px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '7px',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={!!v.d?.esInterna}
+                                onChange={v.d?.onInterna}
+                                style={{ width: '15px', height: '15px', accentColor: '#17160F', margin: '0', cursor: 'pointer' }}
+                              />
+                              Interna
+                            </label>
+                          ) : null}
                           {v.d?.canDeleteConv ? (
                             <button
                               onClick={v.d?.onDeleteConv}
@@ -1173,6 +1253,7 @@ export default function Conversaciones({ v }) {
                                     </h3>
                                     <button
                                       onClick={v.d?.onAnalizar}
+                                      disabled={!v.d?.puedeAnalizar}
                                       style={{
                                         height: '34px',
                                         padding: '0 12px',
@@ -1182,7 +1263,8 @@ export default function Conversaciones({ v }) {
                                         color: '#fff',
                                         fontSize: '12.5px',
                                         fontWeight: '600',
-                                        cursor: 'pointer',
+                                        cursor: v.d?.puedeAnalizar ? 'pointer' : 'not-allowed',
+                                        opacity: v.d?.puedeAnalizar ? '1' : '.45',
                                         display: 'flex',
                                         alignItems: 'center',
                                         gap: '6px',
@@ -1881,6 +1963,7 @@ export default function Conversaciones({ v }) {
                               <Resaltado partes={it?.previewPartes} />
                             </span>
                             <span style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                              {it?.esInterna ? <ChipInterna /> : null}
                               {it?.hasMatch ? (
                                 <span
                                   style={{

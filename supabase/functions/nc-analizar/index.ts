@@ -4,6 +4,7 @@
 // Guarda el análisis en nc_analisis, sugiere el estado de venta (salvo que un usuario lo haya corregido a mano)
 // y abre alertas para las situaciones activas que detecte.
 // Lo puede pedir cualquier usuario activo que tenga acceso a la conversación ({ conversacionId }).
+// Las conversaciones marcadas como internas no se analizan.
 import Anthropic from 'npm:@anthropic-ai/sdk@0.135.0';
 import { db } from '../_shared/whatsapp.ts';
 
@@ -181,10 +182,12 @@ Deno.serve(async req => {
 
   const { data: conv } = await db
     .from('nc_conversaciones')
-    .select('id, vendedor_id, estado_id, cliente:nc_clientes(nombre)')
+    .select('id, vendedor_id, estado_id, interna, cliente:nc_clientes(nombre)')
     .eq('id', conversacionId)
     .maybeSingle();
   if (!conv) return json({ ok: false, mensaje: 'Conversación no encontrada.' }, 404);
+  // Las conversaciones internas (equipo, proveedores, pruebas) no son ventas: no se analizan.
+  if (conv.interna) return json({ ok: false, interna: true, mensaje: 'Es una conversación interna: no se analiza con IA.' });
   if (usuario.rol === 'vendedor' && conv.vendedor_id !== usuario.id) return json({ error: 'Sin acceso a esta conversación.' }, 403);
 
   const [{ data: msgs }, { data: estados }, { data: confIa }, { data: credIa }, { data: confAl }, { data: hist }] = await Promise.all([

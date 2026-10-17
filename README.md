@@ -100,6 +100,13 @@ manual, y abre alertas de intervención para las situaciones activas de Configur
   `esperarSeg`, o un minuto) cada vez que Groq siga al límite, sin volver a preguntar. Corre en el navegador y se
   guarda en `localStorage`: si se recarga la página, se retoma al volver a entrar con el mismo usuario.
 
+### Conversaciones internas
+
+Admin y supervisor pueden marcar una conversación como **Interna** (casilla en el encabezado del detalle;
+columna `nc_conversaciones.interna`). Las internas no son ventas: se ocultan de la lista (se ven con la casilla
+"Ver internas"), del panel, las métricas y las alertas, quedan fuera de la cola de análisis y `nc-analizar` se niega
+a analizarlas.
+
 ### Pendiente
 
 - Instagram (webhook de Meta).

@@ -24,6 +24,7 @@ export default class App extends Component {
     fEstado: 'todos',
     fAlerta: 'todos',
     fEsperando: false,
+    verInternas: false,
     convView: 'lista',
     selConv: null,
     hitIdx: null,
@@ -451,11 +452,14 @@ export default class App extends Component {
     const an = I.an[c.id];
     return { c, id: c.id, cli, est, msgs, last, esperando, esperaMin, nivel, alertas, an, score: an ? this.score(an) : null };
   }
-  convsAll() {
+  // Las conversaciones internas no son ventas: quedan fuera del panel, las métricas y el análisis.
+  // Solo la pantalla de Conversaciones las pide (conInternas) para mostrarlas con el filtro "Ver internas".
+  convsAll(conInternas = false) {
     const s = this.state;
     if (this.props.estadoDemo === 'vacio') return [];
     const I = this.I();
     let l = s.db.conversaciones;
+    if (!conInternas) l = l.filter(c => !c.interna);
     if (s.user.rol === 'vendedor') l = l.filter(c => c.vendedorId === s.user.id);
     return l.map(c => this.cv(c, I));
   }
@@ -520,8 +524,15 @@ export default class App extends Component {
     this.toastMsg('Estado corregido manualmente');
     this.persist(api.cambiarEstado(convId, estadoId));
   }
+  setInterna(convId, interna) {
+    this.upd(db => {
+      db.conversaciones = db.conversaciones.map(c => (c.id === convId ? { ...c, interna } : c));
+    });
+    this.toastMsg(interna ? 'Marcada como interna: no se analiza con IA' : 'Ya no es interna');
+    this.persist(api.marcarInterna(convId, interna));
+  }
   analizar(x) {
-    if (this.state.analizando) return;
+    if (this.state.analizando || x.c.interna) return;
     if (api.usaSupabase) return this.analizarReal(x);
     this.setState({ analizando: true });
     setTimeout(() => {
@@ -643,7 +654,7 @@ export default class App extends Component {
           if (r.ok) {
             c.hechos++;
             if (r.respaldo) c.conClaude++;
-          } else c.errores++;
+          } else if (!r.interna) c.errores++; // si la marcaron como interna mientras esperaba, se saltea
         } catch (e) {
           c.errores++;
         }
@@ -681,7 +692,7 @@ export default class App extends Component {
   colaVM(lista, isVend) {
     const cola = this.state.cola;
     // Pendientes: con mensajes y sin análisis, o con mensajes posteriores al último análisis.
-    const pendientes = lista.filter(x => x.msgs.length && (!x.an || (x.last && x.last.enviadoAt > x.an.creadoAt)));
+    const pendientes = lista.filter(x => !x.c.interna && x.msgs.length && (!x.an || (x.last && x.last.enviadoAt > x.an.creadoAt)));
     const vm = {
       mostrarBoton: api.usaSupabase && !isVend && pendientes.length > 0 && !cola?.activa,
       botonLabel: `Analizar pendientes (${pendientes.length})`,
@@ -816,8 +827,9 @@ export default class App extends Component {
     if (this.props.estadoDemo === 'vacio') return [];
     const I = this.I(),
       cmap = {};
-    this.state.db.conversaciones.forEach(c => (cmap[c.id] = this.cv(c, I)));
-    return this.state.db.alertas.map(a => ({ a, v: cmap[a.conversacionId] }));
+    this.state.db.conversaciones.filter(c => !c.interna).forEach(c => (cmap[c.id] = this.cv(c, I)));
+    // Las alertas de conversaciones internas no se muestran.
+    return this.state.db.alertas.filter(a => cmap[a.conversacionId]).map(a => ({ a, v: cmap[a.conversacionId] }));
   }
   urg(x, y) {
     const r = t => (t.a.estado === 'abierta' ? 0 : 10) + (t.a.nivel === 'critico' ? 0 : 2) + (t.a.tipo === 'intervencion' ? 0 : 1);
@@ -898,6 +910,7 @@ export default class App extends Component {
       nombre: x.cli.nombre,
       nombrePartes: this.partes(x.cli.nombre, q),
       previewPartes: pm ? [{ t: prefijo, hit: false }, ...this.partes(pm.texto, hits.length ? q : '', 90)] : [],
+      esInterna: !!x.c.interna,
       hasMatch: hits.length > 0,
       matchLabel: hits.length === 1 ? '1 mensaje' : hits.length + ' mensajes',
       sub: x.cli.empresa || x.cli.usuario,
@@ -1151,19 +1164,24 @@ export default class App extends Component {
         .map(e => ({ value: e.id, label: e.nombre })),
       onEstado: e => this.setEstado(x.id, e.target.value),
       hist,
+      esInterna: !!x.c.interna,
+      canEditInterna: !isVend,
+      onInterna: e => this.setInterna(x.id, e.target.checked),
       hasAn: !!an,
       noAn: !an,
       an: anVM,
       analizando: s.analizando,
       notAnalizando: !s.analizando,
-      analizarLabel: s.analizando ? 'Analizando…' : 'Analizar ahora',
+      puedeAnalizar: !x.c.interna,
+      analizarLabel: x.c.interna ? 'No se analiza (interna)' : s.analizando ? 'Analizando…' : 'Analizar ahora',
       onAnalizar: () => this.analizar(x),
-      noAnText:
-        'Se analiza cada ' +
-        cfg.cadaMinutos +
-        ' min o cada ' +
-        cfg.cadaMensajes +
-        ' mensajes nuevos, lo que ocurra primero. Podés forzarlo ahora.',
+      noAnText: x.c.interna
+        ? 'Es una conversación interna: no se analiza con IA. Desmarcala como interna para analizarla.'
+        : 'Se analiza cada ' +
+          cfg.cadaMinutos +
+          ' min o cada ' +
+          cfg.cadaMensajes +
+          ' mensajes nuevos, lo que ocurra primero. Podés forzarlo ahora.',
       showAlerts: !isVend,
       alerts: als,
       hasAlerts: als.length > 0,
@@ -1195,9 +1213,12 @@ export default class App extends Component {
       w = s.w,
       isMobile = w < 760,
       isVend = s.user.rol === 'vendedor';
-    const all = this.convsAll(),
+    // Incluye las internas para poder abrir una ya seleccionada; la lista las muestra solo con "Ver internas".
+    const conInternas = this.convsAll(true),
+      all = conInternas.filter(x => !x.c.interna),
+      nInternas = conInternas.length - all.length,
       q = this.qBusqueda();
-    let list = all.filter(x => this.byCanal(x));
+    let list = (s.verInternas ? conInternas : all).filter(x => this.byCanal(x));
     if (s.fEstado !== 'todos') list = list.filter(x => x.c.estadoId === s.fEstado);
     if (!isVend && s.fAlerta === 'con') list = list.filter(x => x.alertas.length);
     if (!isVend && s.fAlerta === 'sin') list = list.filter(x => !x.alertas.length);
@@ -1210,7 +1231,7 @@ export default class App extends Component {
       );
     list.sort((a, b) => ((b.last ? b.last.enviadoAt : '') > (a.last ? a.last.enviadoAt : '') ? 1 : -1));
     const filtersOn = s.fEstado !== 'todos' || s.fAlerta !== 'todos' || s.fEsperando || !!q || s.canal !== 'todos';
-    const sel = s.selConv ? all.find(x => x.id === s.selConv) : null;
+    const sel = s.selConv ? conInternas.find(x => x.id === s.selConv) : null;
     const kanban = s.convView === 'kanban' && !isMobile,
       wide = w >= 900,
       split = w >= 1400;
@@ -1240,6 +1261,10 @@ export default class App extends Component {
         bd: s.fEsperando ? '#17160F' : '#DEDBD1',
         cbg: s.fEsperando ? '#F2C200' : '#F2EFE6',
       },
+      showInternasCheck: !isVend,
+      verInternas: s.verInternas,
+      internasLabel: 'Ver internas (' + nInternas + ')',
+      onVerInternas: e => this.setState({ verInternas: e.target.checked }),
       viewOpts: [
         this.pill('Lista', !kanban, () => this.setState({ convView: 'lista' })),
         this.pill('Kanban', kanban, () => this.setState({ convView: 'kanban', selConv: null })),
@@ -1257,12 +1282,12 @@ export default class App extends Component {
       items,
       hasItems: items.length > 0,
       noItems: items.length === 0,
-      emptyTitle: all.length === 0 ? 'Todavía no hay conversaciones' : 'Sin resultados',
+      emptyTitle: conInternas.length === 0 ? 'Todavía no hay conversaciones' : 'Sin resultados',
       emptyText:
-        all.length === 0
+        conInternas.length === 0
           ? 'Cuando lleguen mensajes por WhatsApp o Instagram los vas a ver acá.'
           : 'Ninguna conversación coincide con los filtros aplicados.',
-      showClear: all.length > 0 && filtersOn,
+      showClear: conInternas.length > 0 && filtersOn,
       showList: !kanban && (!sel || wide),
       listW: wide ? (w >= 1280 ? '380px' : '340px') : '100%',
       showDetailCol: !kanban && (wide || !!sel),
@@ -2001,7 +2026,9 @@ export default class App extends Component {
       config: ['Configuración', 'settings', 'Ajustes'],
     };
     const sideLabels = w >= 1100;
-    const badge = isVend || demo === 'vacio' ? 0 : db.alertas.filter(a => a.estado === 'abierta').length;
+    const internas = new Set(db.conversaciones.filter(c => c.interna).map(c => c.id));
+    const badge =
+      isVend || demo === 'vacio' ? 0 : db.alertas.filter(a => a.estado === 'abierta' && !internas.has(a.conversacionId)).length;
     const nav = allowed.map(k => {
       const on = k === screen;
       return {
